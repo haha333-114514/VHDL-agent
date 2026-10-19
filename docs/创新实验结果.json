@@ -1,0 +1,965 @@
+{
+  "created": "2026-10-19T15:18:54+08:00",
+  "seed": 20261019,
+  "scope": "15 个受控功能故障与 11 个参考电路的工程实验；不是模型修复率、教学效果或形式化证明。",
+  "references": [
+    {
+      "task_id": "counter",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 247,
+      "failed": 0,
+      "source_hash": "782d1b44ba42362993c2ae16cec7839c99a167f52e7fe2884894be675eed23b7",
+      "testbench_hash": "f8f2ddf6de6f90e2437bf34fc46ecdb079abe8b891fe43800ed1e7e97ff560e1",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "majority",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 32,
+      "failed": 0,
+      "source_hash": "2163bfbd5b1c4e923f521ccc707b61cf8ad5495a256460b584a981e71f0a2fbd",
+      "testbench_hash": "b1b4980e6017f8c0397e04c5e017055cd27788b88db9833f6c285c2541f9bb50",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "sequence",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 161,
+      "failed": 0,
+      "source_hash": "5f6848860f884b34fe45bee7869fa5ef702d6e48a9f377d905a7bdc80cb74954",
+      "testbench_hash": "1e2186e8670437e3375c6774be0760a233de663a11aa904669b8a56d118ae323",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "fir",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 129,
+      "failed": 0,
+      "source_hash": "92803f8e1b5203fac375c3ac5313dada65c967e1491e3e4e7eca64caef0c43b1",
+      "testbench_hash": "a1aa094297ed1bf1a0ba4b5b602279236135342ec0aba7c7ac1a7f24cb5ef3f6",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "signed_add",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 145,
+      "failed": 0,
+      "source_hash": "eccf5e8daea1b66da6bd3bf17615d040c457b0bca51cdee0fb292fbedc375c09",
+      "testbench_hash": "d1efd4362e05cbb638aae05fab3890b6933d6b989249b014d467c1e594664ee9",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "adder_tree",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 104,
+      "failed": 0,
+      "source_hash": "a114ec3ee1af8a37c20a09410ccbbbb41000a32598c12508e4a4abbd8f2b3f16",
+      "testbench_hash": "20b04a27f99cb443182c205077358e9468797a4fa58f219ed2d2a2a1133573ea",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "file_rom",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 32,
+      "failed": 0,
+      "source_hash": "17b481f4252aa11920196fa760cd3a054af72620b39d101811a47ff9a6b0eb44",
+      "testbench_hash": "d4d7205a8db9b07ee23710641be4c03bab9269c4fd7d567cdff565d851363ee1",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "lut",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 16,
+      "failed": 0,
+      "source_hash": "f806e95f3f3757b7407446909748212aa0d56d0fe51183f2294ff534525c32e9",
+      "testbench_hash": "89e9e1112a50063c464cda30da0d6d6c886409370cb02226083d0b06d139febe",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "ram",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 106,
+      "failed": 0,
+      "source_hash": "6c6ef6aae046a855704732b537adb09a9d7ce8439e575210d3b5fc520380002d",
+      "testbench_hash": "4fee7eaa6cd42b5afae2f6492cc32a54bc5985ffb501b413efae90f099c6edbd",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "pipeline",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 107,
+      "failed": 0,
+      "source_hash": "70de90edfa495c2aad698d2e89a8afbf4d15121617754063fba60690ab23a289",
+      "testbench_hash": "0a624f1adf0feed21b98b0303f8fa931df59154ae7aa26419d8d93cd21c6b2d8",
+      "seed": 20261019,
+      "first_failure": null
+    },
+    {
+      "task_id": "serial_mul",
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "total": 222,
+      "failed": 0,
+      "source_hash": "ae703248ecfa854ed6f1721c55eeae5bc5220d2d49c3629fb788a93ade195d10",
+      "testbench_hash": "f519f1e631dfb2ba7885bc028f923aee768cc94eb667b63000880fc7bcb12304",
+      "seed": 20261019,
+      "first_failure": null
+    }
+  ],
+  "mutations": [
+    {
+      "id": "counter_teaching_fault",
+      "task_id": "counter",
+      "name": "计数器的优先级：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 6,
+        "failed": 0,
+        "source_hash": "e6c3e3359cd8425c9d334615358954a3dc0f0ff4e5fa4d89a417304e2ab65a89",
+        "testbench_hash": "7c516b6d125d8c4afa243b87adc308e7f87d0cdb08c566fc89674c14d04f6423",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 103,
+        "failed": 45,
+        "source_hash": "e6c3e3359cd8425c9d334615358954a3dc0f0ff4e5fa4d89a417304e2ab65a89",
+        "testbench_hash": "907b5d58b323c0cabf7bfb761a43a0ee4a27de737227d718ffbe4d8202766f26",
+        "seed": null,
+        "first_failure": {
+          "index": 13,
+          "time_ns": 66,
+          "case": "priority",
+          "actual": 4,
+          "expected": 0,
+          "inputs": "reset=1, en=1",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 247,
+        "failed": 157,
+        "source_hash": "e6c3e3359cd8425c9d334615358954a3dc0f0ff4e5fa4d89a417304e2ab65a89",
+        "testbench_hash": "f8f2ddf6de6f90e2437bf34fc46ecdb079abe8b891fe43800ed1e7e97ff560e1",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 13,
+          "time_ns": 66,
+          "case": "priority",
+          "actual": 4,
+          "expected": 0,
+          "inputs": "reset=1, en=1",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "majority_teaching_fault",
+      "task_id": "majority",
+      "name": "五人表决的边界：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 4,
+        "failed": 0,
+        "source_hash": "cddfab7464d7a83fe4f7753be220f8e63f48f6ef49e83c7c228524e6e98d6676",
+        "testbench_hash": "32b9c3bb47f5ac957436c16a21e92b94fb0b9dcdbbcbad5d85a608138abc13b6",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 32,
+        "failed": 10,
+        "source_hash": "cddfab7464d7a83fe4f7753be220f8e63f48f6ef49e83c7c228524e6e98d6676",
+        "testbench_hash": "66c8c04456e699098e634e97db767618149e5c9ff6b997d6d8be359978ac4079",
+        "seed": null,
+        "first_failure": {
+          "index": 4,
+          "time_ns": 40,
+          "case": "threshold",
+          "actual": 1,
+          "expected": 0,
+          "inputs": "din=00011, votes=2",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 32,
+        "failed": 10,
+        "source_hash": "cddfab7464d7a83fe4f7753be220f8e63f48f6ef49e83c7c228524e6e98d6676",
+        "testbench_hash": "b1b4980e6017f8c0397e04c5e017055cd27788b88db9833f6c285c2541f9bb50",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 4,
+          "time_ns": 40,
+          "case": "threshold",
+          "actual": 1,
+          "expected": 0,
+          "inputs": "din=01100, votes=2",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "sequence_teaching_fault",
+      "task_id": "sequence",
+      "name": "序列检测的重叠：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 10,
+        "failed": 0,
+        "source_hash": "b6c5e4f6114244ab685bb65e92d5e6a57c701fbde32ccd0bca33f43895fd80c2",
+        "testbench_hash": "b007de76e2790c81c57de25a7e9f7320f4889ad2330a7730eb046c1ecae1a8f5",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 73,
+        "failed": 3,
+        "source_hash": "b6c5e4f6114244ab685bb65e92d5e6a57c701fbde32ccd0bca33f43895fd80c2",
+        "testbench_hash": "d1a8bf7ee1950b869128ee7b66d14a347e9dc3276ef2428eee9d1b7a23960395",
+        "seed": null,
+        "first_failure": {
+          "index": 16,
+          "time_ns": 156,
+          "case": "overlap",
+          "actual": 0,
+          "expected": 1,
+          "inputs": "din=1, recent=10101",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 161,
+        "failed": 8,
+        "source_hash": "b6c5e4f6114244ab685bb65e92d5e6a57c701fbde32ccd0bca33f43895fd80c2",
+        "testbench_hash": "1e2186e8670437e3375c6774be0760a233de663a11aa904669b8a56d118ae323",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 16,
+          "time_ns": 156,
+          "case": "overlap",
+          "actual": 0,
+          "expected": 1,
+          "inputs": "din=1, recent=10101",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "fir_teaching_fault",
+      "task_id": "fir",
+      "name": "FIR 的历史样本：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 2,
+        "failed": 0,
+        "source_hash": "6c6652c13d20e6fc7202d262d11a527b96b2c621ad998d83bdd968f4d2c93b58",
+        "testbench_hash": "fbb71c98b697a6e473159b52d2fee7aaac38c686f41b7883bed5081c5e2e16be",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 50,
+        "failed": 35,
+        "source_hash": "6c6652c13d20e6fc7202d262d11a527b96b2c621ad998d83bdd968f4d2c93b58",
+        "testbench_hash": "920bac8296c2b6fed2fba1e84d3b30f2a2da736b84ff328e28c7ef61e5a8a8fb",
+        "seed": null,
+        "first_failure": {
+          "index": 3,
+          "time_ns": 26,
+          "case": "impulse",
+          "actual": -1,
+          "expected": 2,
+          "inputs": "x=0, sample=1",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 129,
+        "failed": 112,
+        "source_hash": "6c6652c13d20e6fc7202d262d11a527b96b2c621ad998d83bdd968f4d2c93b58",
+        "testbench_hash": "a1aa094297ed1bf1a0ba4b5b602279236135342ec0aba7c7ac1a7f24cb5ef3f6",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 3,
+          "time_ns": 26,
+          "case": "impulse",
+          "actual": -1,
+          "expected": 2,
+          "inputs": "x=0, sample=1",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "signed_add_teaching_fault",
+      "task_id": "signed_add",
+      "name": "有符号数的位宽：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 3,
+        "failed": 0,
+        "source_hash": "44ad4245180fa5af39f66864a3a522f0568cf85e587f8a656f6bfcdd21c220df",
+        "testbench_hash": "be4c6a1a9785535ac5b83694472dcaced86dcd645488656651f60eb1c21a0f05",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 73,
+        "failed": 15,
+        "source_hash": "44ad4245180fa5af39f66864a3a522f0568cf85e587f8a656f6bfcdd21c220df",
+        "testbench_hash": "f5a2d4c49620bceec2730c1dcf674173082367289e671a6859512a7b2873128b",
+        "seed": null,
+        "first_failure": {
+          "index": 1,
+          "time_ns": 10,
+          "case": "overflow",
+          "actual": 0,
+          "expected": -256,
+          "inputs": "a=-128, b=-128",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 145,
+        "failed": 32,
+        "source_hash": "44ad4245180fa5af39f66864a3a522f0568cf85e587f8a656f6bfcdd21c220df",
+        "testbench_hash": "d1efd4362e05cbb638aae05fab3890b6933d6b989249b014d467c1e594664ee9",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 1,
+          "time_ns": 10,
+          "case": "overflow",
+          "actual": 0,
+          "expected": -256,
+          "inputs": "a=-128, b=-128",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "adder_tree_teaching_fault",
+      "task_id": "adder_tree",
+      "name": "并行加法树的位宽：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 2,
+        "failed": 0,
+        "source_hash": "a904a6d59f8894ae0d741620def7911998e206431ed7e47d302a82fdab51d944",
+        "testbench_hash": "32bcb3a5d867ae2eb611ed8f49cb82bf94308ef34721e51663f8d39c7fe29edf",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 48,
+        "failed": 23,
+        "source_hash": "a904a6d59f8894ae0d741620def7911998e206431ed7e47d302a82fdab51d944",
+        "testbench_hash": "04beae4f40160e9aa46077af12afd9d343a984f08736de10d50c5d7248f85101",
+        "seed": null,
+        "first_failure": {
+          "index": 3,
+          "time_ns": 30,
+          "case": "width",
+          "actual": 28,
+          "expected": 60,
+          "inputs": "lanes=15,15,15,15",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 104,
+        "failed": 47,
+        "source_hash": "a904a6d59f8894ae0d741620def7911998e206431ed7e47d302a82fdab51d944",
+        "testbench_hash": "20b04a27f99cb443182c205077358e9468797a4fa58f219ed2d2a2a1133573ea",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 3,
+          "time_ns": 30,
+          "case": "width",
+          "actual": 28,
+          "expected": 60,
+          "inputs": "lanes=15,15,15,15",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "file_rom_teaching_fault",
+      "task_id": "file_rom",
+      "name": "ROM 与文件驱动验证：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 4,
+        "failed": 0,
+        "source_hash": "c7a38d3fd4b5752d781fcc413ca65a6302216b5215e3374a0c9523b15e996d1a",
+        "testbench_hash": "d4d7205a8db9b07ee23710641be4c03bab9269c4fd7d567cdff565d851363ee1",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 32,
+        "failed": 2,
+        "source_hash": "c7a38d3fd4b5752d781fcc413ca65a6302216b5215e3374a0c9523b15e996d1a",
+        "testbench_hash": "d4d7205a8db9b07ee23710641be4c03bab9269c4fd7d567cdff565d851363ee1",
+        "seed": null,
+        "first_failure": {
+          "index": 10,
+          "time_ns": 100,
+          "case": "rom",
+          "actual": 0,
+          "expected": 81,
+          "inputs": "addr=9",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 32,
+        "failed": 2,
+        "source_hash": "c7a38d3fd4b5752d781fcc413ca65a6302216b5215e3374a0c9523b15e996d1a",
+        "testbench_hash": "d4d7205a8db9b07ee23710641be4c03bab9269c4fd7d567cdff565d851363ee1",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 23,
+          "time_ns": 230,
+          "case": "rom",
+          "actual": 0,
+          "expected": 81,
+          "inputs": "addr=9",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "lut_teaching_fault",
+      "task_id": "lut",
+      "name": "LUT 真值表的地址：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 2,
+        "failed": 0,
+        "source_hash": "51ad4a55242887089bea471c3a47d05450bba5a8548ad5eb325ba705f7dcdddf",
+        "testbench_hash": "b28f5be8cd95d62c426675559e5152027b2d27fbf41db7019b6aa0fe8f4fc802",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 16,
+        "failed": 10,
+        "source_hash": "51ad4a55242887089bea471c3a47d05450bba5a8548ad5eb325ba705f7dcdddf",
+        "testbench_hash": "d6ac44e6465ce3ec865b8cb8fa73c70baf95d6520ac201604aa0558cf8f79e4d",
+        "seed": null,
+        "first_failure": {
+          "index": 2,
+          "time_ns": 20,
+          "case": "lut_address",
+          "actual": 0,
+          "expected": 1,
+          "inputs": "din=0001, INIT=F222",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 16,
+        "failed": 10,
+        "source_hash": "51ad4a55242887089bea471c3a47d05450bba5a8548ad5eb325ba705f7dcdddf",
+        "testbench_hash": "89e9e1112a50063c464cda30da0d6d6c886409370cb02226083d0b06d139febe",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 2,
+          "time_ns": 20,
+          "case": "lut_address",
+          "actual": 0,
+          "expected": 1,
+          "inputs": "din=1100, INIT=F222",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "ram_teaching_fault",
+      "task_id": "ram",
+      "name": "RAM 的同地址读写：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 2,
+        "failed": 0,
+        "source_hash": "507f073a24971ec8c9b308edcf9cf8a792a71940d4cc6491e6c4d0f645963a09",
+        "testbench_hash": "e2e685fc180552f864d9e203e968e56abc3e5364f475a636ab1512506fb3b4ea",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 42,
+        "failed": 21,
+        "source_hash": "507f073a24971ec8c9b308edcf9cf8a792a71940d4cc6491e6c4d0f645963a09",
+        "testbench_hash": "9fa6d95bf3739619d144302ced9e9c036574f8a0a5a463706ded6107e47a3d7d",
+        "seed": null,
+        "first_failure": {
+          "index": 3,
+          "time_ns": 26,
+          "case": "read_during_write",
+          "actual": 17,
+          "expected": 0,
+          "inputs": "addr=3, we=1, din=17",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 106,
+        "failed": 62,
+        "source_hash": "507f073a24971ec8c9b308edcf9cf8a792a71940d4cc6491e6c4d0f645963a09",
+        "testbench_hash": "4fee7eaa6cd42b5afae2f6492cc32a54bc5985ffb501b413efae90f099c6edbd",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 3,
+          "time_ns": 26,
+          "case": "read_during_write",
+          "actual": 17,
+          "expected": 0,
+          "inputs": "addr=3, we=1, din=17",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "pipeline_teaching_fault",
+      "task_id": "pipeline",
+      "name": "流水线的延迟对齐：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 5,
+        "failed": 0,
+        "source_hash": "ff871d0889aab91ddef248a0a1f0429f18e47aa8b8b0aa1e09bd4873aada0f77",
+        "testbench_hash": "b002973f3d453060f1f466a888deafc386b6e22c4fd6188d4f0df622e5c47c4b",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 35,
+        "failed": 31,
+        "source_hash": "ff871d0889aab91ddef248a0a1f0429f18e47aa8b8b0aa1e09bd4873aada0f77",
+        "testbench_hash": "bbe73a83143efd936a5e3ac5e8d670c25591f1febcb478f9349101dd3d33f76f",
+        "seed": null,
+        "first_failure": {
+          "index": 2,
+          "time_ns": 16,
+          "case": "latency",
+          "actual": 10,
+          "expected": 0,
+          "inputs": "reset=0, abcd=1,2,3,4",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 107,
+        "failed": 100,
+        "source_hash": "ff871d0889aab91ddef248a0a1f0429f18e47aa8b8b0aa1e09bd4873aada0f77",
+        "testbench_hash": "0a624f1adf0feed21b98b0303f8fa931df59154ae7aa26419d8d93cd21c6b2d8",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 2,
+          "time_ns": 16,
+          "case": "latency",
+          "actual": 10,
+          "expected": 0,
+          "inputs": "reset=0, abcd=1,2,3,4",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "serial_mul_teaching_fault",
+      "task_id": "serial_mul",
+      "name": "迭代乘法与资源复用：内置概念错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 12,
+        "failed": 0,
+        "source_hash": "ec966d79f3366c1e53b72c06c99f94026865c70fdbef1a676f53f54ab4300033",
+        "testbench_hash": "8fa2f03fe14a4d680a18193d2d17d6ef55c1f92dc72ffa749390d194d8b70d1e",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 134,
+        "failed": 64,
+        "source_hash": "ec966d79f3366c1e53b72c06c99f94026865c70fdbef1a676f53f54ab4300033",
+        "testbench_hash": "58158a0ef041f6a79ae32e9179577467ed8d1f5bc4afce67fd3f3ab85728b75b",
+        "seed": null,
+        "first_failure": {
+          "index": 21,
+          "time_ns": 206,
+          "case": "completion",
+          "actual": 0,
+          "expected": 896,
+          "inputs": "reset=0, start=0, a=99, b=101, cycle=20",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 222,
+        "failed": 119,
+        "source_hash": "ec966d79f3366c1e53b72c06c99f94026865c70fdbef1a676f53f54ab4300033",
+        "testbench_hash": "f519f1e631dfb2ba7885bc028f923aee768cc94eb667b63000880fc7bcb12304",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 21,
+          "time_ns": 206,
+          "case": "completion",
+          "actual": 0,
+          "expected": 896,
+          "inputs": "reset=0, start=0, a=99, b=101, cycle=20",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "counter_step_two",
+      "task_id": "counter",
+      "name": "计数步长从 1 变为 2",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 6,
+        "failed": 5,
+        "source_hash": "f7ab5ca14dac5117b19b64ec7ebbd2e3e5fe7ceb8ac35720f1d5ef89c43f6da2",
+        "testbench_hash": "7c516b6d125d8c4afa243b87adc308e7f87d0cdb08c566fc89674c14d04f6423",
+        "seed": null,
+        "first_failure": {
+          "index": 2,
+          "time_ns": 16,
+          "case": "count",
+          "actual": 2,
+          "expected": 1,
+          "inputs": "reset=0, en=1",
+          "passed": false
+        }
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 103,
+        "failed": 70,
+        "source_hash": "f7ab5ca14dac5117b19b64ec7ebbd2e3e5fe7ceb8ac35720f1d5ef89c43f6da2",
+        "testbench_hash": "907b5d58b323c0cabf7bfb761a43a0ee4a27de737227d718ffbe4d8202766f26",
+        "seed": null,
+        "first_failure": {
+          "index": 3,
+          "time_ns": 16,
+          "case": "count",
+          "actual": 2,
+          "expected": 1,
+          "inputs": "reset=0, en=1",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 247,
+        "failed": 112,
+        "source_hash": "f7ab5ca14dac5117b19b64ec7ebbd2e3e5fe7ceb8ac35720f1d5ef89c43f6da2",
+        "testbench_hash": "f8f2ddf6de6f90e2437bf34fc46ecdb079abe8b891fe43800ed1e7e97ff560e1",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 3,
+          "time_ns": 16,
+          "case": "count",
+          "actual": 2,
+          "expected": 1,
+          "inputs": "reset=0, en=1",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "counter_falling_edge",
+      "task_id": "counter",
+      "name": "上升沿误用为下降沿",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 6,
+        "failed": 0,
+        "source_hash": "03a36413d8763d4cd3f84df6d418b405772aa7b659f33f85b1ddf1bf8ecafa76",
+        "testbench_hash": "7c516b6d125d8c4afa243b87adc308e7f87d0cdb08c566fc89674c14d04f6423",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 103,
+        "failed": 33,
+        "source_hash": "03a36413d8763d4cd3f84df6d418b405772aa7b659f33f85b1ddf1bf8ecafa76",
+        "testbench_hash": "907b5d58b323c0cabf7bfb761a43a0ee4a27de737227d718ffbe4d8202766f26",
+        "seed": null,
+        "first_failure": {
+          "index": 2,
+          "time_ns": 12,
+          "case": "sync",
+          "actual": 1,
+          "expected": 0,
+          "inputs": "before rising edge",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 247,
+        "failed": 68,
+        "source_hash": "03a36413d8763d4cd3f84df6d418b405772aa7b659f33f85b1ddf1bf8ecafa76",
+        "testbench_hash": "f8f2ddf6de6f90e2437bf34fc46ecdb079abe8b891fe43800ed1e7e97ff560e1",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 2,
+          "time_ns": 12,
+          "case": "sync",
+          "actual": 1,
+          "expected": 0,
+          "inputs": "before rising edge",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "fir_coefficient_sign",
+      "task_id": "fir",
+      "name": "FIR 第三系数符号错误",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 2,
+        "failed": 0,
+        "source_hash": "c0f18c069adb3fcad2c0ee03fcab33279d84c3f5507e310784b6184f102ed694",
+        "testbench_hash": "fbb71c98b697a6e473159b52d2fee7aaac38c686f41b7883bed5081c5e2e16be",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 50,
+        "failed": 32,
+        "source_hash": "c0f18c069adb3fcad2c0ee03fcab33279d84c3f5507e310784b6184f102ed694",
+        "testbench_hash": "920bac8296c2b6fed2fba1e84d3b30f2a2da736b84ff328e28c7ef61e5a8a8fb",
+        "seed": null,
+        "first_failure": {
+          "index": 4,
+          "time_ns": 36,
+          "case": "impulse",
+          "actual": 1,
+          "expected": -1,
+          "inputs": "x=0, sample=2",
+          "passed": false
+        }
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 129,
+        "failed": 103,
+        "source_hash": "c0f18c069adb3fcad2c0ee03fcab33279d84c3f5507e310784b6184f102ed694",
+        "testbench_hash": "a1aa094297ed1bf1a0ba4b5b602279236135342ec0aba7c7ac1a7f24cb5ef3f6",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 4,
+          "time_ns": 36,
+          "case": "impulse",
+          "actual": 1,
+          "expected": -1,
+          "inputs": "x=0, sample=2",
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "fir_public_range_overfit",
+      "task_id": "fir",
+      "name": "仅迎合公开测试输入范围的特判",
+      "smoke": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 2,
+        "failed": 0,
+        "source_hash": "57f48fb27af3cb263e55a20f8bcb1d85949ea264dc401f2d07436766ffcce3b9",
+        "testbench_hash": "fbb71c98b697a6e473159b52d2fee7aaac38c686f41b7883bed5081c5e2e16be",
+        "seed": null,
+        "first_failure": null
+      },
+      "full": {
+        "compiled": true,
+        "completed": true,
+        "passed": true,
+        "total": 50,
+        "failed": 0,
+        "source_hash": "57f48fb27af3cb263e55a20f8bcb1d85949ea264dc401f2d07436766ffcce3b9",
+        "testbench_hash": "920bac8296c2b6fed2fba1e84d3b30f2a2da736b84ff328e28c7ef61e5a8a8fb",
+        "seed": null,
+        "first_failure": null
+      },
+      "challenge": {
+        "compiled": true,
+        "completed": true,
+        "passed": false,
+        "total": 129,
+        "failed": 51,
+        "source_hash": "57f48fb27af3cb263e55a20f8bcb1d85949ea264dc401f2d07436766ffcce3b9",
+        "testbench_hash": "a1aa094297ed1bf1a0ba4b5b602279236135342ec0aba7c7ac1a7f24cb5ef3f6",
+        "seed": 20261019,
+        "first_failure": {
+          "index": 25,
+          "time_ns": 246,
+          "case": "samples",
+          "actual": 0,
+          "expected": 31,
+          "inputs": "x=31, sample=0",
+          "passed": false
+        }
+      }
+    }
+  ],
+  "scores": {
+    "smoke": {
+      "detected": 1,
+      "valid_mutants": 15
+    },
+    "full": {
+      "detected": 14,
+      "valid_mutants": 15
+    },
+    "challenge": {
+      "detected": 15,
+      "valid_mutants": 15
+    }
+  }
+}

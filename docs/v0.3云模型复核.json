@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-19T15:25:55+08:00",
+  "run_id": "abbbec8809ad4aa8aae2d7e0240a8e96",
+  "route": "openrouter/free",
+  "model": "liquid/lfm-2.5-2.6b:free",
+  "rounds": 3,
+  "tool_calls": 3,
+  "model_error": null,
+  "public": {
+    "total": 103,
+    "failed": 0,
+    "passed": true
+  },
+  "challenges": [
+    {
+      "seed": 3631041938,
+      "total": 247,
+      "failed": 0,
+      "passed": true,
+      "testbench_hash": "d82d0b261fa032919b756fa38b53da54d10c2aa4f22ead66a530001d4baefdd7"
+    },
+    {
+      "seed": 2926436812,
+      "total": 247,
+      "failed": 0,
+      "passed": true,
+      "testbench_hash": "a21352d8c365993c7494575d182e9cd4873a8906c9f54564e58511437923499e"
+    }
+  ],
+  "verified": true,
+  "account_usage_daily_after_check": 0
+}

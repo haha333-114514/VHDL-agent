@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#175c49">
+  <title>知电 · 数字电路学习智能体</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到实验内容</a>
+  <aside class="sidebar">
+    <a class="brand" href="#workspace" aria-label="知电首页">
+      <span class="brand-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 17h6V9h6v15h6V14h6"/></svg></span>
+      <span><strong>知电</strong><small>ZHIDIAN LAB</small></span>
+    </a>
+    <div class="nav-label">学习空间</div>
+    <nav aria-label="主要导航">
+      <a class="nav-item active" href="#workspace" data-view="workspace"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M10 10v10"/></svg>实验工作台<span class="nav-dot"></span></a>
+      <a class="nav-item" href="#learning" data-view="learning"><svg viewBox="0 0 24 24"><path d="M4 18V6m0 12h16M8 14l4-5 4 2 4-7"/></svg>学习轨迹</a>
+      <a class="nav-item" href="#about" data-view="about"><svg viewBox="0 0 24 24"><path d="M12 8v.01M12 11v6"/><circle cx="12" cy="12" r="9"/></svg>作品说明</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="engine-card"><span class="status-dot" id="engine-dot"></span><div><strong id="engine-label">正在连接工具</strong><small>本机执行 · 证据可追溯</small></div></div>
+      <div class="sidebar-foot"><span>为理解而验证</span><span>v0.3</span></div>
+    </div>
+  </aside>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="breadcrumb">学习空间 <span>/</span> <strong id="page-name">实验工作台</strong></div>
+      <div class="top-actions"><span class="local-badge" id="provider-badge"><span></span>本地证据模式</span><button class="button button-ghost small" id="settings-button"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg>模型设置</button></div>
+    </header>
+
+    <main id="main">
+      <section id="workspace-view" class="view">
+        <div class="intro-row">
+          <div><div class="eyebrow"><span class="tiny-line"></span>可验证的数字电路学习智能体</div><h1>从一个反例，<span>理解一段电路。</span></h1><p class="intro-copy">让真实仿真回答“哪里出了问题”，再把证据变成你的理解。</p></div>
+          <button class="button button-outline" id="export-button" disabled><svg viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg>导出实验报告</button>
+        </div>
+
+        <div class="section-label"><span>选择一个实验</span><span class="muted">从基础逻辑到时序与信号处理</span></div>
+        <div class="task-filters" id="task-filters" aria-label="实验分类"><button data-task-filter="core" class="active">基础实验</button><button data-task-filter="extended">课程扩展</button><button data-task-filter="all">全部实验</button></div>
+        <div class="task-grid" id="task-grid" aria-label="实验选择"></div>
+
+        <div class="workbench">
+          <section class="editor-card" aria-label="代码编辑与运行">
+            <div class="card-heading"><div><span class="step-number">01</span><h2>理解约束，检查代码</h2></div><span class="language-badge">VHDL · 2008</span></div>
+            <details class="contract" open><summary><span id="contract-title">实验约束</span><span class="details-chevron">⌄</span></summary><p id="task-description"></p><ul id="requirements"></ul><code id="task-ports"></code><p class="task-basis" id="task-basis" hidden></p></details>
+            <div class="code-toolbar"><span class="code-file"><span class="file-dot"></span><span id="filename">counter4.vhd</span></span><div><button class="text-button on-dark" id="import-button" title="导入符合当前题目接口的单个 VHDL 文件">导入源码</button><button class="text-button on-dark" id="reset-button">载入错误示例</button></div></div>
+            <div class="code-editor"><div class="line-numbers" id="line-numbers" aria-hidden="true"></div><textarea id="source-code" aria-label="VHDL 源码编辑器" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea></div>
+            <div class="editor-footer"><span id="code-state">可编辑示例 · Ctrl + Enter 运行</span><button class="text-button" id="download-source">保存源码</button></div>
+            <div class="run-controls"><label class="mode-select-label" for="run-mode">诊断方式</label><select id="run-mode"><option value="local">本地证据诊断</option><option value="model">模型智能体 · 工具调用</option></select><button class="button button-primary run-button" id="run-button"><svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></svg><span>检查并诊断</span></button></div>
+            <div class="question-wrap" id="question-wrap" hidden><label for="student-question">想重点弄懂什么？<span>选填</span></label><textarea id="student-question" rows="2" maxlength="4000" placeholder="例如：为什么普通输入都通过，同时复位和使能时却失败？"></textarea></div>
+          </section>
+
+          <section class="evidence-card" aria-label="诊断结果与执行轨迹">
+            <div class="card-heading"><div><span class="step-number">02</span><h2>沿着证据，找到原因</h2></div><span class="live-label" id="run-status">等待运行</span></div>
+            <div class="evidence-tabs" role="tablist" aria-label="诊断视图"><button role="tab" aria-selected="true" id="diagnosis-tab" data-evidence="diagnosis">诊断与提示</button><button role="tab" aria-selected="false" id="trace-tab" data-evidence="trace">执行轨迹 <span id="trace-count">0</span></button></div>
+            <div id="diagnosis-panel" role="tabpanel" aria-labelledby="diagnosis-tab">
+              <div class="empty-state" id="empty-state"><div class="empty-wave"><svg viewBox="0 0 150 70" aria-hidden="true"><path class="wave-bg" d="M5 50h30V20h35v30h35V20h40"/><path d="M5 50h30V20h35v30h35V35h40"/><circle cx="105" cy="35" r="6"/></svg></div><h3>让电路自己给出证据</h3><p>运行后，你会看到实际检查点、失败输入和分层提示。先预测结果，再验证想法。</p><div class="empty-steps"><span>编译</span><i>→</i><span>仿真</span><i>→</i><span>反例</span><i>→</i><span>理解</span></div></div>
+              <div id="diagnosis-content" hidden></div>
+            </div>
+            <div id="trace-panel" role="tabpanel" aria-labelledby="trace-tab" hidden><div class="trace-caption">仅记录实际执行的工具、输入检查和返回结果。</div><ol class="trace-list" id="trace-list"></ol></div>
+          </section>
+        </div>
+
+        <section class="wave-card" id="wave-section" aria-label="检查点采样与原始日志">
+          <div class="card-heading"><div><span class="step-number">03</span><h2>看见差异，理解时序</h2><span class="subtle-tag">真实仿真采样</span></div><div class="wave-actions"><button class="text-button" id="previous-failure" disabled>上个反例</button><button class="text-button" id="next-failure" disabled>下个反例</button><a class="text-button" id="vcd-download" hidden>下载 VCD ↗</a></div></div>
+          <div class="wave-tabs" role="tablist" aria-label="仿真证据"><button class="active" data-data="wave" role="tab" aria-selected="true">采样波形</button><button data-data="checks" role="tab" aria-selected="false">检查点列表</button><button data-data="logs" role="tab" aria-selected="false">工具日志</button><button data-data="artifacts" role="tab" aria-selected="false">验证资料</button></div>
+          <div id="wave-data-panel"><div class="wave-placeholder" id="wave-placeholder"><span class="placeholder-line"></span><p>完成一次仿真后，在这里对照预期与实际输出。</p></div><div id="wave-content" hidden><div class="wave-legend"><span><i class="legend-reference"></i>参考值 · 独立模型</span><span><i class="legend-actual"></i>实际值 · GHDL</span><span><i class="legend-failure"></i>不一致检查点</span></div><div id="wave-chart"></div><div class="sample-inspector" id="sample-inspector"></div><p class="sampling-note">阶梯连线展示离散检查点，检查点之间的事件不在此图中。完整事件波形请下载 VCD。</p></div></div>
+          <div id="checks-data-panel" hidden><div class="table-scroll"><table><thead><tr><th>检查点</th><th>时间</th><th>输入 / 条件</th><th>预期</th><th>实际</th><th>结果</th></tr></thead><tbody id="checks-body"></tbody></table></div></div>
+          <div id="logs-data-panel" hidden><pre class="tool-log" id="tool-log">尚未调用 GHDL。</pre></div>
+          <div id="artifacts-data-panel" hidden><div class="artifact-toolbar"><label for="artifact-select">本次实验的真实文件</label><select id="artifact-select" aria-label="验证文件"></select><a class="text-button" id="artifact-download" hidden>下载所选文件 ↗</a></div><pre class="tool-log" id="artifact-source">运行后可查看固定测试平台；文件驱动实验另有输入与实际输出。</pre></div>
+        </section>
+
+        <section class="practice-card" id="practice-section"><div class="practice-intro"><div class="eyebrow">再向前一步</div><h2>能通过，也要能解释。</h2><p>用一道变式题，检验这次理解。</p><div class="practice-progress" id="practice-progress"></div></div><div class="quiz-area" id="quiz-area"></div></section>
+        <footer class="page-footer"><span>知电 · 让每个判断，都有证据。</span><span>仿真验证 ≠ 综合 / 板级验证</span></footer>
+      </section>
+
+      <section id="learning-view" class="view" hidden><div class="intro-row"><div><div class="eyebrow">把一次实验，变成长期理解</div><h1>你的学习轨迹</h1><p class="intro-copy">代码验证和理解检查分别记录，方便回到真正需要复习的地方。</p></div><button class="button button-outline" id="refresh-learning">刷新记录</button></div><div class="stats-grid" id="learning-stats"></div><section class="panel"><div class="card-heading"><h2>概念练习记录</h2><span class="muted">本机保存</span></div><div class="concept-grid" id="concept-grid"></div><p class="sampling-note">练习表现用于安排复习，不作为已掌握知识的证明。</p></section><section class="panel history-panel"><div class="card-heading"><h2>最近实验</h2><span class="muted">点击继续查看证据</span></div><div id="history-list"></div></section></section>
+
+      <section id="about-view" class="view" hidden><div class="intro-row"><div><div class="eyebrow">AI 智能体开发 · 作品原型</div><h1>知电，如何帮助理解？</h1><p class="intro-copy">以规格为起点，以仿真为证据，以理解为目标。</p></div></div><div class="about-grid"><article class="panel about-copy"><span class="about-number">01 / 背景</span><h2>“能编译”之后，才是理解的开始。</h2><p>数字电路初学者常遇到优先级、状态重叠与信号更新等问题。仅看代码，很难判断误差来自逻辑、时序还是采样约定。</p><p>知电把固定规格、独立参考模型、真实 GHDL 工具和教学反馈连接起来，让每条建议都能回到具体反例。</p></article><article class="panel about-copy"><span class="about-number">02 / 工作流程</span><h2>观察 → 检查 → 解释 → 再验证</h2><p>本地证据模式按固定流程执行基础检查与完整测试，依据真实失败用例给出规则诊断。</p><p>配置模型后，模型可自主选择读取约束、补测、查看采样和验证候选修改。工具调用与结果在界面中可见，候选代码需要独立仿真。</p></article><article class="panel about-copy"><span class="about-number">03 / 操作指南</span><h2>第一次使用，四步即可。</h2><ol><li>选择实验，阅读约束，先预测代码的行为。</li><li>运行“检查并诊断”，查看失败检查点与日志。</li><li>逐级展开提示，修改代码并重新检查。</li><li>回答变式问题，导出带源码和原始证据的报告。</li></ol></article><article class="panel about-copy"><span class="about-number">04 / 验证范围</span><h2>清楚记录，才能准确判断。</h2><p>本原型支持11 组固定接口的单电路教学任务，使用 VHDL-2008。当前结果仅代表测试集覆盖，不包含形式化证明、器件综合、布局布线或板级测试。</p><p>本地诊断不联网。模型模式将当前代码、问题和仿真摘要发送至你配置的接口，按需读取概念练习统计。学习记录与运行产物保存在本项目 data 目录。</p></article></div><section class="panel about-copy innovation-evidence"><span class="about-number">05 / 创新验证</span><h2>修复要复测，测试也要被检验。</h2><p>模型提交候选修改后，程序再生成两组新种子。公开测试和追加验证全部通过，才能应用为“已验证的候选版本”。每组保留种子、测试平台指纹与真实波形，方便复查。</p><p>2026 年 10 月 19 日的内置工程实验：15 个受控故障，基础检查检出 1 个，公开完整测试检出 14 个，追加验证检出 15 个；11 个正确参考实现全部通过。一个迎合公开输入范围的 FIR 特判版本，被追加验证拒绝。</p><p>这些数字只属于这组受控实验，不代表通用修复率或学习提升。有限输入已穷举的任务，仅重排输入顺序。</p></section><section class="panel about-demonstration"><div><div class="eyebrow">推荐演示</div><h2>普通计数正常，同时复位却出错。</h2><p>用计数器错误示例展示：基础检查通过 → 完整测试找到反例 → 观察分支优先级 → 修改并复测 → 回答同步复位变式题。</p></div><button class="button button-primary" id="start-demo">进入计数器实验 <span>→</span></button></section></section>
+    </main>
+  </div>
+
+  <dialog id="settings-dialog"><form id="settings-form">
+    <div class="dialog-heading"><div><div class="eyebrow">可选增强</div><h2>连接模型智能体</h2></div><button type="button" class="icon-button" id="close-settings" aria-label="关闭设置">×</button></div>
+    <p class="dialog-copy">使用提供工具调用的模型服务，让模型读取反例、解释原因并验证候选修改。可先使用免费服务预设。</p>
+    <label for="provider-preset">服务预设</label><select id="provider-preset"><option value="free">OpenRouter · 免费模型</option><option value="custom">自定义服务</option></select>
+    <p class="privacy-note" id="preset-note">免费预设使用 openrouter/free，由平台选择支持工具调用的免费模型。需申请 API Key；有额度和可用性限制，不会自动切换付费模型。</p>
+    <label for="api-protocol">接口协议</label><select id="api-protocol"><option value="chat_completions">Chat Completions · 兼容服务</option><option value="responses">Responses API</option></select>
+    <label for="api-base">API 根地址</label><input id="api-base" type="url" value="https://openrouter.ai/api/v1" required>
+    <label for="api-model">模型名称</label><input id="api-model" type="text" value="openrouter/free" placeholder="填写支持工具调用的模型标识" maxlength="150">
+    <label for="api-key">API Key <span>同一地址留空保留</span></label><input id="api-key" type="password" autocomplete="off" placeholder="仅保留在本次服务进程内存中">
+    <p class="privacy-note">模型模式会发送本题代码、问题、仿真摘要及按需读取的概念练习统计到此地址。更换地址时需重新填写密钥。本地证据模式不发送这些内容。此处配置重启后失效；持久配置可使用项目 .env 文件。</p>
+    <div class="settings-current" id="settings-current"></div><div class="dialog-actions"><button type="button" class="button button-ghost" id="clear-key">清除已存密钥</button><button type="submit" class="button button-primary">保存本次配置</button></div>
+  </form></dialog>
+  <input id="file-input" type="file" accept=".vhd,.vhdl" hidden>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
