@@ -3,15 +3,18 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import re
+import secrets
 import shutil
 import subprocess
 import time
 
 from .catalog import TASKS, testbench
 from .extended_catalog import fixture_files
+from .grading import expected_checks, grade_log
 
 MAX_SOURCE = 40000
 MAX_LOG = 256000
@@ -86,7 +89,11 @@ def simulate(task_id: str, source: str, suite: str, folder: Path, *, seed: int |
         raise RuntimeError("未找到 GHDL。请安装后设置 GHDL_PATH，再重启应用。")
     folder.mkdir(parents=True, exist_ok=False)
     (folder / "candidate.vhd").write_text(source, encoding="utf-8", newline="\n")
+    tag = secrets.token_hex(12)
+    manifest = expected_checks(task_id, suite, seed)
     bench = testbench(task_id, suite, seed)
+    for marker in ("CHECK", "INVALID", "DONE", "MISMATCH"):
+        bench = bench.replace("ZD_" + marker + "|", "ZD_" + marker + "|" + tag + "|")
     (folder / "zd_tb.vhd").write_text(bench, encoding="utf-8", newline="\n")
     fixtures = fixture_files(task_id,suite,seed)
     for name, content in fixtures.items():
@@ -94,7 +101,8 @@ def simulate(task_id: str, source: str, suite: str, folder: Path, *, seed: int |
     started = time.monotonic()
     logs, commands = [], []
     result = {"suite": suite, "status": "compile_error", "compiled": False, "completed": False, "passed": False, "total": 0, "failed": 0, "checks": [], "diagnostics": [], "wave_file": None, "source_hash": hashlib.sha256(source.encode()).hexdigest()}
-    result.update({"seed": seed, "testbench_hash": hashlib.sha256(bench.encode()).hexdigest(), "fixture_hashes": {name: hashlib.sha256(content.encode()).hexdigest() for name, content in fixtures.items()}})
+    result.update({"seed": seed, "testbench_hash": hashlib.sha256(bench.encode()).hexdigest(), "fixture_hashes": {name: hashlib.sha256(content.encode()).hexdigest() for name, content in fixtures.items()}, "protocol_version": 2, "run_tag": tag, "expected_total": len(manifest), "invalid_count": 0, "integrity_error": None})
+    (folder / "checks.json").write_text(json.dumps({"protocol_version": 2, "run_tag": tag, "checks": manifest}, ensure_ascii=False, indent=2), encoding="utf-8")
     options = ["--std=08", "--workdir=."]
     stages = [
         ("分析电路", [ghdl, "-a", *options, "candidate.vhd"]),
@@ -109,17 +117,13 @@ def simulate(task_id: str, source: str, suite: str, folder: Path, *, seed: int |
         if name == "运行仿真":
             result["compiled"] = True
             result["status"] = "runtime_error"
-            pattern = r"ZD_CHECK\|(\d+)\|(\d+)\|([^|\r\n]+)\|(-?\d+)\|(-?\d+)\|([^\r\n]+)"
-            for match in re.finditer(pattern, log):
-                index, ns, kind, actual, expected, inputs = match.groups()
-                result["checks"].append({"index": int(index), "time_ns": int(ns), "case": kind, "actual": int(actual), "expected": int(expected), "inputs": inputs.strip(), "passed": actual == expected})
-            ending = re.search(r"ZD_DONE\|(\d+)\|(\d+)", log)
-            result["total"] = len(result["checks"])
-            result["failed"] = sum(not row["passed"] for row in result["checks"])
-            if ending and int(ending[1]) == result["total"] and int(ending[2]) == result["failed"] and code == 0:
-                result["completed"] = True
-                result["passed"] = result["failed"] == 0
+            result.update(grade_log(log, tag, manifest, code))
+            if result["completed"]:
                 result["status"] = "passed" if result["passed"] else "failed"
+            elif result["stopped_by_guard"]:
+                result["status"] = "limit"
+            elif code == 0:
+                result["status"] = "integrity_error"
             if (folder / "wave.vcd").is_file():
                 result["wave_file"] = str(folder / "wave.vcd")
         if code != 0:
@@ -130,7 +134,7 @@ def simulate(task_id: str, source: str, suite: str, folder: Path, *, seed: int |
         result["diagnostics"].append({"line": int(match[1]), "column": int(match[2]), "message": match[3]})
     result.update({"log": full_log, "commands": commands, "duration_ms": round((time.monotonic() - started) * 1000)})
     result["files"] = [{"label":label,"path":str(folder/name)} for name,label in [
-        ("zd_tb.vhd","固定测试平台 · VHDL"), ("candidate.vhd","本次被测源码"),
+        ("zd_tb.vhd","固定测试平台 · VHDL"), ("candidate.vhd","本次被测源码"), ("checks.json","固定检查清单 · JSON"),
         ("vectors.txt","文件输入 · 地址与参考值"), ("observed.txt","文件输出 · 地址 / 实际 / 参考")
     ] if (folder/name).is_file()]
     (folder / "simulation.log").write_text(full_log, encoding="utf-8")
@@ -140,10 +144,15 @@ def simulate(task_id: str, source: str, suite: str, folder: Path, *, seed: int |
 def diagnose(task_id: str, source: str, result: dict) -> dict:
     task = TASKS[task_id]
     if not result["compiled"]:
+        if "obsoleted by package" in result.get("log", ""):
+            return {"title": "先检查系统时间与 GHDL 标准库", "explanation": "GHDL 报告设计单元早于其标准库，当前不能据此判断学生代码功能。请检查系统日期时间是否正确，以及标准库与工具版本是否一致，再重新编译。", "line": None, "kind": "environment", "evidence": "GHDL 标准库过期 / 时间一致性错误"}
         first = result["diagnostics"][0] if result["diagnostics"] else {}
         return {"title": "编译尚未通过，先处理语法或接口", "explanation": first.get("message", "查看原始工具日志，确认端口、类型和语法是否符合任务约束。"), "line": first.get("line"), "kind": "compile", "evidence": "GHDL 编译输出"}
     if not result["completed"]:
-        return {"title": "仿真未完整结束，暂不能判断功能", "explanation": "运行中断、超限或发生运行时错误。已取得的部分检查点不能代表完整测试通过。请查看日志。", "line": None, "kind": "runtime", "evidence": "GHDL 运行输出"}
+        return {"title": "仿真未完整结束，暂不能判断功能", "explanation": result.get("integrity_error") or "运行中断、超限或发生运行时错误。已取得的部分检查点不能代表完整测试通过。请查看日志。", "line": None, "kind": "runtime", "evidence": f"实际 {result['total']} / 预期 {result.get('expected_total', '?')} 个检查点"}
+    if result.get("invalid_count"):
+        first = next(check for check in result["checks"] if not check.get("valid", True))
+        return {"title": "采样输出含未知值或非二值电平", "explanation": "检查点上的 X、U、Z 或弱逻辑电平不能按数字 0 计为通过。先检查复位、驱动与赋值完整性，再判断数值功能。", "line": None, "kind": "undefined_output", "evidence": f"检查点 {first['index']} · {first['time_ns']} ns · 非 0/1 输出", "first_failure": first}
     if result["passed"]:
         return {"title": "当前测试集全部通过", "explanation": "接下来尝试变式问题，检查自己能否解释行为。测试通过只覆盖本题列出的输入与检查点，不代表形式化证明、器件综合或板级验证。", "line": None, "kind": "pass", "evidence": f"{result['total']} 个真实仿真检查点"}
     first = next(check for check in result["checks"] if not check["passed"])

@@ -70,7 +70,7 @@ class Service:
 
     @staticmethod
     def compact(result: dict) -> dict:
-        return {"status": result["status"], "compiled": result["compiled"], "completed": result["completed"], "total": result["total"], "failed": result["failed"], "first_failures": [row for row in result["checks"] if not row["passed"]][:8], "diagnostics": result["diagnostics"][:8], "log_tail": result["log"][-2500:]}
+        return {"status": result["status"], "compiled": result["compiled"], "completed": result["completed"], "total": result["total"], "failed": result["failed"], "expected_total": result.get("expected_total"), "invalid_count": result.get("invalid_count", 0), "integrity_error": result.get("integrity_error"), "source_hash": result["source_hash"], "first_failures": [row for row in result["checks"] if not row["passed"]][:8], "diagnostics": result["diagnostics"][:8], "log_tail": result["log"][-2500:]}
 
     def execute(self, run_id: str, config: dict) -> None:
         start = time.monotonic()
@@ -101,7 +101,11 @@ class Service:
                 job["result"], job["diagnosis"] = result, diagnostic
             event("wave", "整理仿真证据", f"保留 {result['total']} 个检查点、原始日志及实际生成的 VCD。" if result["checks"] else "已保存原始工具日志；当前没有完整的功能采样。")
             event("diagnosis", "生成学习建议", diagnostic["title"])
-            if job["mode"] == "model":
+            if job["mode"] == "model" and diagnostic["kind"] == "environment":
+                with self.lock:
+                    job["model_error"] = "本机工具环境异常，模型请求已暂缓；修正系统时间或 GHDL 标准库后再运行。"
+                event("model-environment", "模型请求暂缓", job["model_error"], "attention")
+            elif job["mode"] == "model":
                 self.model_step(job, config, directory, event)
             with self.lock:
                 job["duration_ms"] = round((time.monotonic() - start) * 1000)
@@ -228,10 +232,22 @@ class Service:
         task, result = TASKS[job["task_id"]], job["result"]
         lines = [f"# 知电实验报告：{task['title']}", "", f"- 实验编号：{job['id']}", f"- 时间：{job['created']}", f"- 模式：{'模型智能体' if job['mode']=='model' else '本地证据诊断'}", f"- 源码 SHA-256：`{result['source_hash']}`", f"- 教学参考版本：{'是' if job['reference_run'] else '否'}", "", "## 任务约束", "", *[f"- {line}" for line in task["requirements"]], "", "## 实际运行结果", "", self.describe(result), "", f"覆盖范围：{task['coverage']}", "", f"诊断：{job['diagnosis']['title']}", "", job["diagnosis"]["explanation"], "", "## 失败检查点（最多前 20 个）", "", "| 检查点 | 时间/ns | 输入 | 预期 | 实际 |", "| --- | --- | --- | --- | --- |"]
         for row in [row for row in result["checks"] if not row["passed"]][:20]:
-            lines.append(f"| {row['index']} | {row['time_ns']} | {row['inputs']} | {row['expected']} | {row['actual']} |")
+            actual = "非 0/1 输出" if row.get("valid") is False else row["actual"]
+            lines.append(f"| {row['index']} | {row['time_ns']} | {row['inputs']} | {row['expected']} | {actual} |")
+        if result.get("protocol_version"):
+            lines += ["", f"评分协议：v{result['protocol_version']}；检查清单要求 {result['expected_total']} 点；非二值采样 {result['invalid_count']} 点。"]
+            if result.get("integrity_error"):
+                lines += ["", "完整性检查：" + result["integrity_error"]]
         if job.get("model"):
             model = job["model"]
             lines += ["", "## 模型教学解释", "", f"实际响应模型：{model['model']}；{model['rounds']} 轮请求，{model['tool_calls']} 次工具调用。", "", model["text"]]
+            if model.get("requests"):
+                lines += ["", "## 每轮模型与用量记录", "", "| 轮次 | 服务报告模型 | 请求编号 | 输入 / 输出 tokens | 服务报告费用 |", "| --- | --- | --- | --- | --- |"]
+                for request in model["requests"]:
+                    usage = request["usage"]
+                    cost = usage["reported_cost"]
+                    lines.append(f"| {request['round']} | {request['actual_model'] or '未报告'} | {request['response_id'] or '未报告'} | {usage['input_tokens'] if usage['input_tokens'] is not None else '未报告'} / {usage['output_tokens'] if usage['output_tokens'] is not None else '未报告'} | {cost if cost is not None else '未报告'} |")
+                lines += ["", "费用单位由服务商定义；仅记录本次已返回请求的报告值。缺失值不是零，不代表账户总费用。"]
         if job.get("candidate"):
             candidate = job["candidate"]
             lines += ["", "## 候选修复验证", "", f"综合判定：{'通过' if candidate['verified'] else '尚未通过'}；原始源码未覆盖。", "", "公开测试：" + self.describe(candidate["result"])]

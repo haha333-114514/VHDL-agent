@@ -45,7 +45,6 @@ def main():
     summary = {"created": now(), "seed": SEED, "scope": "15 个受控功能故障与 11 个参考电路的工程实验；不是模型修复率、教学效果或形式化证明。", "references": references, "mutations": mutations, "scores": scores}
     text = json.dumps(summary, ensure_ascii=False, indent=2) + "\n"
     (directory / "results.json").write_text(text, encoding="utf-8")
-    (ROOT / "docs/创新实验结果.json").write_text(text, encoding="utf-8")
     md = ["# 创新实验：盲测复核与测试集故障检出", "", summary["scope"], "", f"时间：{summary['created']}；重放种子：`{SEED}`。全部结果来自实际 GHDL，不调用云模型。", "", f"11 个正确参考实现的追加验证：{sum(row['passed'] for row in references)}/11 通过。", "", "| 测试集 | 检出的有效故障 |", "| --- | --- |"]
     for suite, label in (("smoke", "基础检查"), ("full", "公开完整测试"), ("challenge", "追加随机 / 顺序验证")):
         md.append(f"| {label} | {scores[suite]['detected']}/{scores[suite]['valid_mutants']} |")
@@ -54,8 +53,12 @@ def main():
         statuses = ["漏检" if row[suite]["passed"] else "检出" if row[suite]["compiled"] and row[suite]["completed"] else "无效" for suite in ("smoke", "full", "challenge")]
         md.append("| " + row["name"] + " | " + " | ".join(statuses) + " |")
     md.extend(["", "## 为什么需要额外验证", "", "故意构造的 FIR 特判版在输入超出 [-12,12] 时输出 0。它迎合现有公开随机样本范围，仍违反整数 FIR 规格。新测试加入合法的较大输入与新随机序列，检查公开测试通过是否只是范围特判。", "", "候选代码提交后才生成两组 32 位种子，写入报告用于重放。表决器、LUT、ROM 的有限输入已经穷举，所以追加验证只重排输入顺序，不宣称引入新的真值表输入。随机复核增强工程证据，仍不保证任意输入都正确。", ""])
-    (ROOT / "docs/创新实验结果.md").write_text("\n".join(md), encoding="utf-8")
     success = len(valid) == len(mutations) and all(row["passed"] for row in references) and scores["challenge"]["detected"] == len(valid)
+    if success:
+        (ROOT / "docs/创新实验结果.json").write_text(text, encoding="utf-8")
+        (ROOT / "docs/创新实验结果.md").write_text("\n".join(md), encoding="utf-8")
+    else:
+        print("Evaluation incomplete: historical successful reports were preserved; see data/ for this run.", flush=True)
     print(json.dumps({"scores": scores, "reference_passed": sum(row["passed"] for row in references), "valid_mutants": len(valid), "success": success}, ensure_ascii=False), flush=True)
     return 0 if success else 1
 

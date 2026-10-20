@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+from .grading import BINARY_HELPER
 import textwrap
 
 
@@ -358,6 +359,7 @@ def extended_testbench(task_id, suite, seed=None):
         "serial_mul": ("signal clk,reset,start : std_logic := '0'; signal a,b : unsigned(7 downto 0) := (others=>'0'); signal product : unsigned(15 downto 0);", "clk=>clk,reset=>reset,start=>start,a=>a,b=>b,product=>product", "to_integer(product)"),
     }
     signals, ports, actual = setups[task_id]
+    defined = {"signed_add": "bits_defined(std_logic_vector(y))", "adder_tree": "bits_defined(std_logic_vector(y))", "file_rom": "bits_defined(std_logic_vector(data))", "lut": "f='0' or f='1'", "ram": "bits_defined(std_logic_vector(dout))", "pipeline": "true", "serial_mul": "bits_defined(std_logic_vector(product))"}[task_id]
     body = []
     declarations, imports = "", ""
     if task_id == "file_rom":
@@ -402,6 +404,7 @@ def extended_testbench(task_id, suite, seed=None):
       entity zd_tb is end;
       architecture test of zd_tb is
         {signals}
+        {BINARY_HELPER}
         function bit_int(v : std_logic) return integer is
         begin
           if v='0' then return 0; elsif v='1' then return 1; else return -999; end if;
@@ -413,10 +416,16 @@ def extended_testbench(task_id, suite, seed=None):
           {declarations}
           procedure check_value(kind : string; expected : integer; inputs : string) is
             variable actual : integer;
+            variable defined : boolean;
           begin
-            actual := {actual}; total := total+1;
+            total := total+1;
+            defined := {defined};
+            if defined then actual := {actual}; else
+              actual := 0;
+              report "ZD_INVALID|" & integer'image(total);
+            end if;
             report "ZD_CHECK|" & integer'image(total) & "|" & integer'image(now/1 ns) & "|" & kind & "|" & integer'image(actual) & "|" & integer'image(expected) & "|" & inputs;
-            if actual /= expected then
+            if not defined or actual /= expected then
               failed := failed+1;
               assert false report "ZD_MISMATCH|" & kind severity warning;
             end if;

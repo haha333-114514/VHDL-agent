@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+from .grading import BINARY_HELPER
 import textwrap
 
 
@@ -335,6 +336,7 @@ def testbench(task_id: str, suite: str, seed: int | None = None) -> str:
     else:
         signals = "signal clk, reset : std_logic := '0'; signal x : integer := 0; signal y : integer;"
         ports, actual = "clk => clk, reset => reset, x => x, y => y", "y"
+    defined = {"majority": "f='0' or f='1'", "counter": "bits_defined(std_logic_vector(q))", "sequence": "matched='0' or matched='1'", "fir": "true"}[task_id]
     body = []
     for row_index, row in enumerate(rows):
         if task_id == "majority":
@@ -362,6 +364,7 @@ def testbench(task_id: str, suite: str, seed: int | None = None) -> str:
         entity zd_tb is end;
         architecture test of zd_tb is
           {signals}
+          {BINARY_HELPER}
           function bit_int(v : std_logic) return integer is
           begin
             if v='0' then return 0; elsif v='1' then return 1; else return -999; end if;
@@ -372,11 +375,16 @@ def testbench(task_id: str, suite: str, seed: int | None = None) -> str:
             variable total, failed : integer := 0;
             procedure check_value(kind : string; expected : integer; inputs : string) is
               variable actual : integer;
+              variable defined : boolean;
             begin
-              actual := {actual};
               total := total + 1;
+              defined := {defined};
+              if defined then actual := {actual}; else
+                actual := 0;
+                report "ZD_INVALID|" & integer'image(total);
+              end if;
               report "ZD_CHECK|" & integer'image(total) & "|" & integer'image(now / 1 ns) & "|" & kind & "|" & integer'image(actual) & "|" & integer'image(expected) & "|" & inputs;
-              if actual /= expected then
+              if not defined or actual /= expected then
                 failed := failed + 1;
                 assert false report "ZD_MISMATCH|" & kind severity warning;
               end if;

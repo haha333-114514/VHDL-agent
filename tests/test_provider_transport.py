@@ -99,6 +99,14 @@ class TransportTests(unittest.TestCase):
             run_agent(config, {}, lambda *args: self.fail("must not dispatch"), lambda *args: None)
         self.assertEqual(len(self.requests), 1)
 
+    def test_chat_transport_preserves_reported_identity_and_usage(self):
+        self.replies.append((200, {"id": "generation-123", "model": "provider/free-model", "usage": {"prompt_tokens": 12, "completion_tokens": 3, "total_tokens": 15, "cost": 0}, "choices": [{"finish_reason": "stop", "message": {"role": "assistant", "content": "已返回。"}}]}))
+        result = run_agent({"base": self.base, "model": "openrouter/free", "key": "test", "protocol": "chat_completions"}, {}, lambda *args: {}, lambda *args: None)
+        self.assertEqual(result["requests"][0]["response_id"], "generation-123")
+        self.assertEqual(result["requests"][0]["actual_model"], "provider/free-model")
+        self.assertEqual(result["usage"]["total_tokens"], 15)
+        self.assertEqual(result["usage"]["reported_cost"], 0)
+
     def test_incomplete_or_malformed_chat_outputs_do_not_execute_tools(self):
         for choice in [
             {"finish_reason": "length", "message": {"content": "partial"}},

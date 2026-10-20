@@ -1,5 +1,5 @@
 {
-  "created": "2026-10-19T10:06:32+08:00",
+  "created": "2026-10-20T10:58:52+08:00",
   "scope": "11 组固定教学电路的工程回归；不代表模型泛化、自动修复成功率或教学效果评测。",
   "cases": 22,
   "expected_behavior_cases": 22,
@@ -13,7 +13,7 @@
       "failed": 45,
       "expected_behavior": true,
       "diagnosis": "复位与使能冲突时，输出偏离约定",
-      "duration_ms": 7781,
+      "duration_ms": 1906,
       "source_hash": "e6c3e3359cd8425c9d334615358954a3dc0f0ff4e5fa4d89a417304e2ab65a89"
     },
     {
@@ -25,7 +25,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 2000,
+      "duration_ms": 2640,
       "source_hash": "782d1b44ba42362993c2ae16cec7839c99a167f52e7fe2884894be675eed23b7"
     },
     {
@@ -37,7 +37,7 @@
       "failed": 10,
       "expected_behavior": true,
       "diagnosis": "两票 / 三票交界处出现反例",
-      "duration_ms": 1828,
+      "duration_ms": 2188,
       "source_hash": "cddfab7464d7a83fe4f7753be220f8e63f48f6ef49e83c7c228524e6e98d6676"
     },
     {
@@ -49,7 +49,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 1828,
+      "duration_ms": 1922,
       "source_hash": "2163bfbd5b1c4e923f521ccc707b61cf8ad5495a256460b584a981e71f0a2fbd"
     },
     {
@@ -61,7 +61,7 @@
       "failed": 3,
       "expected_behavior": true,
       "diagnosis": "独立序列通过，重叠匹配被遗漏",
-      "duration_ms": 2234,
+      "duration_ms": 2250,
       "source_hash": "b6c5e4f6114244ab685bb65e92d5e6a57c701fbde32ccd0bca33f43895fd80c2"
     },
     {
@@ -73,7 +73,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 2344,
+      "duration_ms": 2094,
       "source_hash": "5f6848860f884b34fe45bee7869fa5ef702d6e48a9f377d905a7bdc80cb74954"
     },
     {
@@ -85,7 +85,7 @@
       "failed": 35,
       "expected_behavior": true,
       "diagnosis": "冲激尾部与 FIR 系数不一致",
-      "duration_ms": 2125,
+      "duration_ms": 2109,
       "source_hash": "6c6652c13d20e6fc7202d262d11a527b96b2c621ad998d83bdd968f4d2c93b58"
     },
     {
@@ -97,7 +97,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 2047,
+      "duration_ms": 2110,
       "source_hash": "92803f8e1b5203fac375c3ac5313dada65c967e1491e3e4e7eca64caef0c43b1"
     },
     {
@@ -109,7 +109,7 @@
       "failed": 15,
       "expected_behavior": true,
       "diagnosis": "扩位之前已经发生截断",
-      "duration_ms": 2000,
+      "duration_ms": 2078,
       "source_hash": "44ad4245180fa5af39f66864a3a522f0568cf85e587f8a656f6bfcdd21c220df"
     },
     {
@@ -121,7 +121,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 1937,
+      "duration_ms": 1906,
       "source_hash": "eccf5e8daea1b66da6bd3bf17615d040c457b0bca51cdee0fb292fbedc375c09"
     },
     {
@@ -133,7 +133,7 @@
       "failed": 23,
       "expected_behavior": true,
       "diagnosis": "最后一级加法丢失进位",
-      "duration_ms": 1921,
+      "duration_ms": 1875,
       "source_hash": "a904a6d59f8894ae0d741620def7911998e206431ed7e47d302a82fdab51d944"
     },
     {
@@ -145,7 +145,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 1859,
+      "duration_ms": 1875,
       "source_hash": "a114ec3ee1af8a37c20a09410ccbbbb41000a32598c12508e4a4abbd8f2b3f16"
     },
     {
@@ -157,7 +157,7 @@
       "failed": 2,
       "expected_behavior": true,
       "diagnosis": "ROM 表项与文件中的参考值不一致",
-      "duration_ms": 1860,
+      "duration_ms": 1579,
       "source_hash": "c7a38d3fd4b5752d781fcc413ca65a6302216b5215e3374a0c9523b15e996d1a"
     },
     {
@@ -169,7 +169,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 1672,
+      "duration_ms": 1875,
       "source_hash": "17b481f4252aa11920196fa760cd3a054af72620b39d101811a47ff9a6b0eb44"
     },
     {
@@ -181,7 +181,7 @@
       "failed": 10,
       "expected_behavior": true,
       "diagnosis": "LUT 地址位序与真值表约定不一致",
-      "duration_ms": 1907,
+      "duration_ms": 2203,
       "source_hash": "51ad4a55242887089bea471c3a47d05450bba5a8548ad5eb325ba705f7dcdddf"
     },
     {
@@ -193,7 +193,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 2016,
+      "duration_ms": 2047,
       "source_hash": "f806e95f3f3757b7407446909748212aa0d56d0fe51183f2294ff534525c32e9"
     },
     {
@@ -205,7 +205,7 @@
       "failed": 21,
       "expected_behavior": true,
       "diagnosis": "同地址写入时输出了新值",
-      "duration_ms": 1954,
+      "duration_ms": 2079,
       "source_hash": "507f073a24971ec8c9b308edcf9cf8a792a71940d4cc6491e6c4d0f645963a09"
     },
     {
@@ -217,7 +217,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 1906,
+      "duration_ms": 2172,
       "source_hash": "6c6ef6aae046a855704732b537adb09a9d7ce8439e575210d3b5fc520380002d"
     },
     {
@@ -241,7 +241,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 1907,
+      "duration_ms": 2000,
       "source_hash": "70de90edfa495c2aad698d2e89a8afbf4d15121617754063fba60690ab23a289"
     },
     {
@@ -253,7 +253,7 @@
       "failed": 64,
       "expected_behavior": true,
       "diagnosis": "最终输出缺少最后一次累加",
-      "duration_ms": 2984,
+      "duration_ms": 2937,
       "source_hash": "ec966d79f3366c1e53b72c06c99f94026865c70fdbef1a676f53f54ab4300033"
     },
     {
@@ -265,7 +265,7 @@
       "failed": 0,
       "expected_behavior": true,
       "diagnosis": "当前测试集全部通过",
-      "duration_ms": 2953,
+      "duration_ms": 2937,
       "source_hash": "ae703248ecfa854ed6f1721c55eeae5bc5220d2d49c3629fb788a93ade195d10"
     }
   ]

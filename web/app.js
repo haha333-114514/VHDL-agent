@@ -4,8 +4,8 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const state = { tasks: [], task: null, health: null, csrf: "", run: null, busy: false, sample: 0, hints: {}, quizzes: [], quizIndex: 0, quizChoice: null, quizResult: null, view: "workspace", provider: null, taskFilter: "core", artifactUrl: "" };
 const escapeHTML = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
-const valueLabel = (value) => value === -999 ? "U / X" : String(value);
-const statusNames = { passed: "通过", failed: "有反例", compile_error: "编译未通过", runtime_error: "运行未完成", limit: "执行超限" };
+const valueLabel = (value) => value === null ? "非 0/1" : value === -999 ? "U / X" : String(value);
+const statusNames = { passed: "通过", failed: "有反例", compile_error: "编译未通过", runtime_error: "运行未完成", integrity_error: "证据不完整", limit: "执行超限" };
 let toastTimer;
 
 function toast(message) {
@@ -138,9 +138,15 @@ function renderDiagnosis() {
     html += `<div class="result-metrics"><div class="metric-box"><strong>${result.total - result.failed}<span> / ${result.total}</span></strong><span>检查点通过</span></div><div class="metric-box"><strong>${result.failed}</strong><span>不一致检查点</span></div><div class="metric-box"><strong>${(result.duration_ms / 1000).toFixed(1)}<span> s</span></strong><span>完整测试耗时</span></div></div>`;
   }
   if (improvedCoverage) html += '<p class="run-summary-note">基础检查通过，补充边界后发现反例。普通输入通过，仍可能遗漏关键条件。</p>';
+  if (result.invalid_count) html += `<p class="model-error">${result.invalid_count} 个检查点输出含未知值或非二值电平，已判为不通过。</p>`;
+  if (result.integrity_error) html += `<p class="model-error">${escapeHTML(result.integrity_error)}</p>`;
   html += `<div class="evidence-fact"><span>${escapeHTML(diagnosis.evidence)}${diagnosis.line ? `<button class="line-button" data-line="${diagnosis.line}">查看相关行 L${diagnosis.line}</button>` : ""}</span></div>`;
   if (job.status === "running" && job.mode === "model") html += '<div class="faint-note"><span class="spinner"></span> 模型正在结合证据选择工具，已有仿真结果可先查看。</div>';
-  if (job.model) html += `<div class="model-copy"><strong>模型教学解释 · ${escapeHTML(job.model.model)}</strong>${escapeHTML(job.model.text)}</div>`;
+  if (job.model) {
+    const model = job.model;
+    html += `<p class="faint-note">以下文字由模型生成；通过状态以独立仿真判定为准。</p><div class="model-copy"><strong>模型教学解释 · 最后响应 ${escapeHTML(model.model)}</strong>${escapeHTML(model.text)}</div>`;
+    if (model.requests?.length) html += `<details class="request-audit"><summary>查看每轮模型与用量</summary>${model.requests.map(request => `<p>第 ${request.round} 轮 · ${escapeHTML(request.actual_model || "模型未报告")} · ${request.duration_ms} ms<br>输入 / 输出 tokens：${request.usage.input_tokens ?? "未报告"} / ${request.usage.output_tokens ?? "未报告"}；服务报告费用：${request.usage.reported_cost ?? "未报告"}</p>`).join("")}<p class="faint-note">仅含已返回响应的服务报告值，费用单位由服务商定义；未报告不代表零费用。</p></details>`;
+  }
   if (job.model_error) html += `<div class="model-error">${escapeHTML(job.model_error)}</div>`;
   if (job.candidate) {
     const candidate = job.candidate;
@@ -280,11 +286,20 @@ function renderWave() {
   state.sample = Math.min(Math.max(0, state.sample), checks.length - 1);
   const width = 1000, left = 88, right = 25, plotWidth = width - left - right;
   const minTime = 0, maxTime = Math.max(checks[checks.length - 1].time_ns, 1);
-  const values = checks.flatMap((row) => [row.actual, row.expected]).filter((value) => value !== -999);
+  const values = checks.flatMap((row) => [row.actual, row.expected]).filter((value) => Number.isFinite(value) && value !== -999);
   const minValue = Math.min(0, ...values), maxValue = Math.max(1, ...values), range = maxValue - minValue;
   const x = (time) => left + ((time - minTime) / maxTime) * plotWidth;
   const y = (value, lane) => lane + 22 - ((value - minValue) / range) * 42;
-  const path = (field, lane) => checks.map((row, index) => `${index ? "H" : "M"}${x(row.time_ns).toFixed(2)}${index ? " V" : " "}${y(row[field] === -999 ? minValue : row[field], lane).toFixed(2)}`).join(" ");
+  const path = (field, lane) => {
+    let connected = false;
+    return checks.map(row => {
+      const value = row[field];
+      if (!Number.isFinite(value) || value === -999) { connected = false; return ""; }
+      const segment = `${connected ? "H" : "M"}${x(row.time_ns).toFixed(2)}${connected ? " V" : " "}${y(value, lane).toFixed(2)}`;
+      connected = true;
+      return segment;
+    }).join(" ");
+  };
   let svg = `<svg viewBox="0 0 ${width} 205" role="img" aria-label="参考输出与实际输出的离散采样图，点击选择检查点"><rect x="${left}" y="22" width="${plotWidth}" height="148" rx="3" fill="#fbfcf8"/>`;
   for (let tick = 0; tick <= 8; tick++) {
     const position = left + tick / 8 * plotWidth;
@@ -293,7 +308,8 @@ function renderWave() {
   checks.forEach((row) => { if (!row.passed) svg += `<rect x="${x(row.time_ns)-2.5}" y="25" width="5" height="140" fill="#e6b994" opacity=".2"/>`; });
   svg += `<text x="16" y="61">参考值</text><text x="16" y="136">实际值</text><text x="991" y="189" text-anchor="end">ns</text><line x1="${left}" y1="96" x2="${width-right}" y2="96" stroke="#e6eddd" stroke-width="1"/><path d="${path("expected", 57)}" fill="none" stroke="#779b69" stroke-width="2.1"/><path d="${path("actual", 132)}" fill="none" stroke="#c79169" stroke-width="2.1"/>`;
   const current = checks[state.sample], cursorX = x(current.time_ns);
-  svg += `<line x1="${cursorX}" x2="${cursorX}" y1="16" y2="171" stroke="#879c77" stroke-width="1.1" stroke-dasharray="4 3"/><circle cx="${cursorX}" cy="${y(current.expected,57)}" r="3.7" fill="#fff" stroke="#779b69" stroke-width="1.5"/><circle cx="${cursorX}" cy="${y(current.actual === -999 ? minValue : current.actual,132)}" r="3.7" fill="#fff" stroke="#c79169" stroke-width="1.5"/><text x="${Math.min(cursorX+8,930)}" y="15">#${current.index} · ${current.time_ns} ns</text></svg>`;
+  const actualMarker = current.actual === null || current.actual === -999 ? `<text x="${Math.min(cursorX+8,900)}" y="135">非 0/1</text>` : `<circle cx="${cursorX}" cy="${y(current.actual,132)}" r="3.7" fill="#fff" stroke="#c79169" stroke-width="1.5"/>`;
+  svg += `<line x1="${cursorX}" x2="${cursorX}" y1="16" y2="171" stroke="#879c77" stroke-width="1.1" stroke-dasharray="4 3"/><circle cx="${cursorX}" cy="${y(current.expected,57)}" r="3.7" fill="#fff" stroke="#779b69" stroke-width="1.5"/>${actualMarker}<text x="${Math.min(cursorX+8,930)}" y="15">#${current.index} · ${current.time_ns} ns</text></svg>`;
   $("#wave-chart").innerHTML = svg;
   $("#sample-inspector").innerHTML = `<span>检查点 <strong>#${current.index}</strong></span><span>时间 <strong>${current.time_ns} ns</strong></span><span>${escapeHTML(current.inputs)}</span><span>预期 <strong>${current.expected}</strong></span><span>实际 <strong>${escapeHTML(valueLabel(current.actual))}</strong></span><span class="sample-status ${current.passed ? "pass" : ""}">${current.passed ? "输出一致" : "发现反例"}</span>`;
 }

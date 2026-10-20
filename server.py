@@ -6,8 +6,10 @@ import argparse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import mimetypes
+import os
 from pathlib import Path
 import secrets
+import socket
 import sys
 from urllib.parse import unquote, urlparse, parse_qs
 import webbrowser
@@ -21,10 +23,20 @@ ROOT = Path(__file__).resolve().parent
 STATIC = ROOT / "web"
 
 
+class LocalHTTPServer(ThreadingHTTPServer):
+    # Windows SO_REUSEADDR can silently share a port with another local app.
+    allow_reuse_address = os.name != "nt"
+
+    def server_bind(self):
+        if os.name == "nt":
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+
 def make_handler(service: Service):
     csrf = secrets.token_urlsafe(32)
     class Handler(BaseHTTPRequestHandler):
-        server_version = "Zhidian/0.3"
+        server_version = "Zhidian/0.4"
 
         def log_message(self, fmt, *args):
             # Never log request bodies, source code or credentials.
@@ -64,7 +76,7 @@ def make_handler(service: Service):
             path = unquote(parsed.path)
             try:
                 if path == "/api/health":
-                    return self.send_json({"ok": True, "name": "知电", "version": "0.3.0", "ghdl": bool(find_ghdl()), "provider": service.config.public(), "csrf": csrf})
+                    return self.send_json({"ok": True, "name": "知电", "version": "0.4.0", "ghdl": bool(find_ghdl()), "provider": service.config.public(), "csrf": csrf})
                 if path == "/api/tasks":
                     return self.send_json({"tasks": [public_task(task) for task in TASKS.values()]})
                 if path == "/api/profile":
@@ -88,7 +100,7 @@ def make_handler(service: Service):
                     if len(parts) > 5 and parts[4] == "artifact":
                         base = (service.directory / "runs" / run_id).resolve()
                         artifact = (base / "/".join(parts[5:])).resolve()
-                        allowed = artifact.suffix in {".vcd", ".log"} or artifact.name in {"zd_tb.vhd","candidate.vhd","vectors.txt","observed.txt"}
+                        allowed = artifact.suffix in {".vcd", ".log"} or artifact.name in {"zd_tb.vhd","candidate.vhd","vectors.txt","observed.txt","checks.json"}
                         if not artifact.is_relative_to(base) or not allowed or not artifact.is_file():
                             raise FileNotFoundError("未找到该实验产物。")
                         if artifact.stat().st_size > 8_000_000:
@@ -165,7 +177,7 @@ def main():
     load_env(ROOT / ".env")
     service = Service(args.data_dir)
     try:
-        server = ThreadingHTTPServer(("127.0.0.1", args.port), make_handler(service))
+        server = LocalHTTPServer(("127.0.0.1", args.port), make_handler(service))
     except OSError:
         print(f"端口 {args.port} 不可用。可使用 python server.py --port 8766", flush=True)
         return 1

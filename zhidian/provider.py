@@ -3,9 +3,13 @@
 from __future__ import annotations
 
 import json
+import math
 import os
+import ssl
 from pathlib import Path
 import threading
+import time
+from decimal import Decimal
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, HTTPRedirectHandler, build_opener
@@ -121,7 +125,11 @@ def _post(config: dict, endpoint: str, payload: dict) -> dict:
         if exc.code == 429:
             raise RuntimeError("模型服务返回 HTTP 429：免费额度已用完或服务限流。请稍后重试；不会自动切换付费模型，本地仿真结果仍可使用。") from None
         raise RuntimeError(f"模型接口返回 HTTP {exc.code}。请核对地址、模型、密钥和额度；本地仿真结果仍可使用。") from None
-    except (URLError, TimeoutError) as exc:
+    except URLError as exc:
+        if isinstance(exc.reason, ssl.SSLCertVerificationError):
+            raise RuntimeError("模型服务证书校验失败。请检查系统日期时间与服务证书配置；本地证据仍保留。") from None
+        raise RuntimeError("模型接口连接失败或超时。本地仿真结果仍可使用。") from None
+    except TimeoutError:
         raise RuntimeError("模型接口连接失败或超时。本地仿真结果仍可使用。") from None
     except (ValueError, OSError):
         raise RuntimeError("模型接口未返回有效的 JSON 响应。") from None
@@ -175,29 +183,63 @@ def request_response(config: dict, messages: list[dict], functions: list[dict]) 
     # Retain provider reasoning signatures for follow-up calls, without displaying them.
     retained = {key: message[key] for key in ("content", "tool_calls", "reasoning_details", "reasoning_content") if key in message}
     retained["role"] = "assistant"
-    return {"output": output, "history": [retained], "model": response.get("model")}
+    return {"output": output, "history": [retained], "model": response.get("model"), "id": response.get("id"), "usage": response.get("usage")}
+
+
+def usage_summary(usage) -> dict:
+    usage = usage if isinstance(usage, dict) else {}
+    def integer(*names):
+        for name in names:
+            value = usage.get(name)
+            if type(value) is int and value >= 0:
+                return value
+        return None
+    cost = usage.get("cost")
+    if type(cost) not in {int, float} or not math.isfinite(cost) or cost < 0:
+        cost = None
+    return {"input_tokens": integer("input_tokens", "prompt_tokens"), "output_tokens": integer("output_tokens", "completion_tokens"), "total_tokens": integer("total_tokens"), "reported_cost": cost}
+
+
+def total_usage(requests: list[dict]) -> dict:
+    total = {}
+    for field in ("input_tokens", "output_tokens", "total_tokens", "reported_cost"):
+        values = [row["usage"][field] for row in requests]
+        complete = bool(values) and all(value is not None for value in values)
+        total[field] = (float(sum(Decimal(str(value)) for value in values)) if field == "reported_cost" else sum(values)) if complete else None
+        total[field + "_complete"] = complete
+    total["scope"] = "仅包含本次已返回模型响应中服务商报告的用量；缺失值不视为零。"
+    return total
 
 
 def run_agent(config: dict, context: dict, dispatch, event, request_fn=request_response) -> dict:
     """Bounded, real function-calling loop; injected transport supports offline tests."""
     messages = [{"role": "user", "content": json.dumps(context, ensure_ascii=False)}]
-    calls, text_parts = 0, []
+    calls, requests = 0, []
     for round_index in range(7):
         summary_only = round_index == 6
         if summary_only:
             messages.append({"role": "user", "content": "本轮仅归纳已有工具证据，不再调用工具。请用简体中文说明公开测试与追加验证的实际结果、未完成事项和一个理解检查，只有 verified=true 的候选可以说通过。"})
         event("model", f"模型规划 · 第 {round_index + 1} 轮", "根据已有证据选择下一步工具。", "running")
+        started = time.monotonic()
         response = request_fn(config, messages, [] if summary_only else tools_schema())
+        def safe_metadata(value):
+            if not isinstance(value, str) or not value:
+                return None
+            return (value.replace(config["key"], "[已隐藏]") if config.get("key") else value)[:300]
+        audit = {"round": round_index+1, "requested_model": config["model"], "actual_model": safe_metadata(response.get("model")), "response_id": safe_metadata(response.get("id")), "duration_ms": round((time.monotonic()-started)*1000), "usage": usage_summary(response.get("usage")), "tool_names": []}
+        requests.append(audit)
         output = response.get("output", [])
         if not isinstance(output, list):
             raise RuntimeError("模型响应缺少有效的 output 列表。")
         if any(not isinstance(item, dict) for item in output):
             raise RuntimeError("模型响应包含无效的输出项。")
-        event("model", f"模型规划 · 第 {round_index + 1} 轮", "模型响应已返回，记录可见解释与工具请求。", "done")
+        event("model", f"模型规划 · 第 {round_index + 1} 轮", "实际响应模型：" + (audit["actual_model"] or "服务未报告") + "；记录工具请求与服务报告用量。", "done")
         messages.extend(response.get("history", output))
         function_calls = [item for item in output if item.get("type") == "function_call"]
+        audit["tool_names"] = [str(item.get("name", ""))[:100] for item in function_calls]
         if summary_only and function_calls:
             raise RuntimeError("模型在收尾阶段仍请求工具，已停止；已有验证结果保留。")
+        text_parts = []
         for item in output:
             if item.get("type") == "message":
                 for content in item.get("content", []):
@@ -207,7 +249,7 @@ def run_agent(config: dict, context: dict, dispatch, event, request_fn=request_r
             final = "\n\n".join(text_parts).strip()
             if not final:
                 raise RuntimeError("模型未给出教学解释，请查看本地证据或重试。")
-            return {"text": final, "tool_calls": calls, "rounds": round_index + 1, "model": response.get("model") or config["model"], "requested_model": config["model"]}
+            return {"text": final, "tool_calls": calls, "rounds": round_index + 1, "model": audit["actual_model"] or config["model"], "requested_model": config["model"], "requests": requests, "usage": total_usage(requests)}
         if calls + len(function_calls) > 8:
             raise RuntimeError("已达到本次 8 次模型工具调用上限。已有工具证据已保留。")
         for item in function_calls:

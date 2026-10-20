@@ -10,13 +10,19 @@ import unittest
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from server import make_handler
+from server import LocalHTTPServer, make_handler
 from zhidian.catalog import TASKS
 from zhidian.service import Service
 from zhidian.simulator import find_ghdl
 
 
 class HTTPTests(unittest.TestCase):
+    def test_running_app_port_cannot_be_shared_by_another_server(self):
+        with LocalHTTPServer(("127.0.0.1", 0), make_handler(self.service)) as first:
+            with self.assertRaises(OSError):
+                with ThreadingHTTPServer(first.server_address, make_handler(self.service)):
+                    self.fail("A second server unexpectedly shared the application port")
+
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory(prefix="zhidian-http-")
@@ -121,6 +127,9 @@ class HTTPTests(unittest.TestCase):
         code, wave = self.request(job["result"]["wave_url"])
         self.assertEqual(code, 200)
         self.assertIn("$timescale", wave)
+        code, manifest = self.request(f"/api/runs/{job['id']}/artifact/full/checks.json")
+        self.assertEqual(code, 200)
+        self.assertEqual(len(json.loads(manifest)["checks"]), 103)
         code, _ = self.request(f"/api/runs/{job['id']}/artifact/%2e%2e/%2e%2e/learning.sqlite3")
         self.assertEqual(code, 404)
         code, reference = self.request("/api/run", {"task_id": "counter", "source": TASKS["counter"]["starter"], "action": "reference"})

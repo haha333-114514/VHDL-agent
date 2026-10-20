@@ -1,0 +1,233 @@
+{
+  "date": "2026-10-20",
+  "timezone": "Asia/Shanghai",
+  "version": "0.4.0",
+  "scope": "有限工程回归与一次真实免费云实验；不是通用修复率、教学效果或隔离安全证明。",
+  "baseline_commit": "b9d27e588f7188fb9e1647e02558f3febed4a42c",
+  "tests": {
+    "count": 55,
+    "passed": 55,
+    "skipped": 0,
+    "duration_seconds": 191.394,
+    "command": "python -m unittest discover -s tests -v"
+  },
+  "grading_before": [
+    {
+      "id": "unknown_zero",
+      "expected_pass": false,
+      "matches_expectation": false,
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "status": "passed",
+      "total": 103,
+      "failed": 0,
+      "invalid_count": null,
+      "expected_total": null,
+      "integrity_error": null,
+      "source_hash": "37f6a7157d487032918ead01d81dd491a521469537b7ebee7464d175992a81e5",
+      "testbench_hash": "907b5d58b323c0cabf7bfb761a43a0ee4a27de737227d718ffbe4d8202766f26"
+    },
+    {
+      "id": "forged_completion",
+      "expected_pass": false,
+      "matches_expectation": false,
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "status": "passed",
+      "total": 0,
+      "failed": 0,
+      "invalid_count": null,
+      "expected_total": null,
+      "integrity_error": null,
+      "source_hash": "5cdb9bec5009e5b42ffab5b57a330ba3d90fe95b5f954e2ce80846ed3bd8a323",
+      "testbench_hash": "907b5d58b323c0cabf7bfb761a43a0ee4a27de737227d718ffbe4d8202766f26"
+    },
+    {
+      "id": "correct_uninitialized_counter",
+      "expected_pass": true,
+      "matches_expectation": true,
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "status": "passed",
+      "total": 103,
+      "failed": 0,
+      "invalid_count": null,
+      "expected_total": null,
+      "integrity_error": null,
+      "source_hash": "a2b0bbccc8fe2c5c4727f67a5bb5545523e6ef31eaa8e5afae5b9d82416afb44",
+      "testbench_hash": "907b5d58b323c0cabf7bfb761a43a0ee4a27de737227d718ffbe4d8202766f26"
+    }
+  ],
+  "grading_after": [
+    {
+      "id": "unknown_zero",
+      "expected_pass": false,
+      "matches_expectation": true,
+      "compiled": true,
+      "completed": true,
+      "passed": false,
+      "status": "failed",
+      "total": 103,
+      "failed": 33,
+      "invalid_count": 33,
+      "expected_total": 103,
+      "integrity_error": null,
+      "source_hash": "37f6a7157d487032918ead01d81dd491a521469537b7ebee7464d175992a81e5",
+      "testbench_hash": "0fd2ef3bdf830f0d870c0d662fb599bf389349173d157c333eba2815fa9fb6bc"
+    },
+    {
+      "id": "forged_completion",
+      "expected_pass": false,
+      "matches_expectation": true,
+      "compiled": true,
+      "completed": false,
+      "passed": false,
+      "status": "limit",
+      "total": 0,
+      "failed": 0,
+      "invalid_count": 0,
+      "expected_total": 103,
+      "integrity_error": "仿真由时间或 delta 上限终止，不能视为测试完成。",
+      "source_hash": "5cdb9bec5009e5b42ffab5b57a330ba3d90fe95b5f954e2ce80846ed3bd8a323",
+      "testbench_hash": "d03039c94322fee072eb9cbdd66147828f63c35226aa1e4c8dde79b90b5496fb"
+    },
+    {
+      "id": "correct_uninitialized_counter",
+      "expected_pass": true,
+      "matches_expectation": true,
+      "compiled": true,
+      "completed": true,
+      "passed": true,
+      "status": "passed",
+      "total": 103,
+      "failed": 0,
+      "invalid_count": 0,
+      "expected_total": 103,
+      "integrity_error": null,
+      "source_hash": "a2b0bbccc8fe2c5c4727f67a5bb5545523e6ef31eaa8e5afae5b9d82416afb44",
+      "testbench_hash": "2b445ae125c2777237da19e2c7f86854ae42fdd3e289b61b37dc6f71c9f6b9fa"
+    }
+  ],
+  "cloud": {
+    "run_id": "199f4d29ae8644549f8d78a5beaeb267",
+    "status": "complete",
+    "baseline": {
+      "total": 103,
+      "failed": 45,
+      "passed": false,
+      "source_hash": "e6c3e3359cd8425c9d334615358954a3dc0f0ff4e5fa4d89a417304e2ab65a89"
+    },
+    "candidate": {
+      "verified": true,
+      "total": 103,
+      "failed": 0,
+      "challenges": [
+        {
+          "seed": 3621107831,
+          "total": 247,
+          "failed": 0,
+          "passed": true,
+          "testbench_hash": "1fc53abc179290de34cc2247bd1e62d1452e04d6d8b199da1c367de581a626e7"
+        },
+        {
+          "seed": 2909110729,
+          "total": 247,
+          "failed": 0,
+          "passed": true,
+          "testbench_hash": "a4ef3bffacac85dc75de3af4340611124fe6e8fcd3babe775d97d45f3465b250"
+        }
+      ],
+      "source_hash": "94269b9bdbc05c6c94c52a415d50832038ef7434fec44640bdc7d2ce4710d4e5"
+    },
+    "model_error": null,
+    "model": {
+      "model": "poolside/laguna-s-2.1:free",
+      "requested_model": "openrouter/free",
+      "rounds": 3,
+      "tool_calls": 3,
+      "requests": [
+        {
+          "round": 1,
+          "requested_model": "openrouter/free",
+          "actual_model": "dots-studio/dots-3-note-preview:free",
+          "response_id": "gen-1792464927-IZJcJQxEx9Wx9SsSSLS2",
+          "duration_ms": 8547,
+          "usage": {
+            "input_tokens": 3498,
+            "output_tokens": 135,
+            "total_tokens": 3633,
+            "reported_cost": 0
+          },
+          "tool_names": [
+            "inspect_contract",
+            "read_waveform"
+          ]
+        },
+        {
+          "round": 2,
+          "requested_model": "openrouter/free",
+          "actual_model": "nvidia/nemotron-3.5-super-vl:free",
+          "response_id": "gen-1792464935-TJf2gN6LaStL5qwZeMTh",
+          "duration_ms": 20016,
+          "usage": {
+            "input_tokens": 4883,
+            "output_tokens": 718,
+            "total_tokens": 5601,
+            "reported_cost": 0
+          },
+          "tool_names": [
+            "propose_patch"
+          ]
+        },
+        {
+          "round": 3,
+          "requested_model": "openrouter/free",
+          "actual_model": "poolside/laguna-s-2.1:free",
+          "response_id": "gen-1792464964-8rYaiMcE8CdEh9RN15ff",
+          "duration_ms": 18734,
+          "usage": {
+            "input_tokens": 10274,
+            "output_tokens": 712,
+            "total_tokens": 10986,
+            "reported_cost": 0
+          },
+          "tool_names": []
+        }
+      ],
+      "usage": {
+        "input_tokens": 18655,
+        "input_tokens_complete": true,
+        "output_tokens": 1565,
+        "output_tokens_complete": true,
+        "total_tokens": 20220,
+        "total_tokens_complete": true,
+        "reported_cost": 0.0,
+        "reported_cost_complete": true,
+        "scope": "仅包含本次已返回模型响应中服务商报告的用量；缺失值不视为零。"
+      }
+    }
+  },
+  "fixed_regression": {
+    "cases": 22,
+    "expected_behavior_cases": 22,
+    "reference_checks": 638
+  },
+  "mutation_experiment": {
+    "references": 11,
+    "reference_checks": 1301,
+    "valid_mutants": 15,
+    "detected": {
+      "smoke": 1,
+      "full": 14,
+      "challenge": 15
+    }
+  },
+  "mock_transport_tests": "终端回复替代中间规划文字；缺失用量不算零；模型切换逐轮记录；不会回显配置密钥。",
+  "screenshots": [
+    "assets/v0.4-unknown-output.png",
+    "assets/v0.4-model-audit.png"
+  ]
+}
