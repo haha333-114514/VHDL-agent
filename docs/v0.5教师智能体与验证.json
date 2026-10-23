@@ -1,0 +1,672 @@
+{
+  "date": "2026-10-24",
+  "timezone": "Asia/Shanghai",
+  "version": "0.5.0",
+  "scope": "工程工作流验证；受控模型决策与真实云调用分开，不代表通用修复率或教学效果。",
+  "tests": {
+    "passed": 71,
+    "total": 71,
+    "skipped": 0,
+    "duration_seconds": 269.682
+  },
+  "controlled_experiments": {
+    "date": "2026-10-24",
+    "scope": "受控离线模型决策 + 真实 GHDL；不是云模型自主修复率或学生学习效果。",
+    "results": [
+      {
+        "case": "failed_then_fixed",
+        "passed": true,
+        "run_id": "5daf4aaba52343aba91571cdc5816eeb",
+        "goal": "repair",
+        "mission_status": "achieved",
+        "requests": 5,
+        "model_decisions": "scripted_offline",
+        "simulator": "real_GHDL",
+        "attempts": [
+          {
+            "id": "patch-1",
+            "source_hash": "f7ab5ca14dac5117b19b64ec7ebbd2e3e5fe7ceb8ac35720f1d5ef89c43f6da2",
+            "public_passed": false,
+            "verified": false,
+            "checks": 103,
+            "failed": 70,
+            "challenge_checks": []
+          },
+          {
+            "id": "patch-2",
+            "source_hash": "782d1b44ba42362993c2ae16cec7839c99a167f52e7fe2884894be675eed23b7",
+            "public_passed": true,
+            "verified": true,
+            "checks": 103,
+            "failed": 0,
+            "challenge_checks": [
+              247,
+              247
+            ]
+          }
+        ],
+        "practice_checked": false,
+        "original_source_preserved": true
+      },
+      {
+        "case": "blind_test_feedback",
+        "passed": true,
+        "run_id": "269e3bd387bd44d8aa4ea684191bb72d",
+        "goal": "repair",
+        "mission_status": "achieved",
+        "requests": 5,
+        "model_decisions": "scripted_offline",
+        "simulator": "real_GHDL",
+        "attempts": [
+          {
+            "id": "patch-1",
+            "source_hash": "57f48fb27af3cb263e55a20f8bcb1d85949ea264dc401f2d07436766ffcce3b9",
+            "public_passed": true,
+            "verified": false,
+            "checks": 50,
+            "failed": 0,
+            "challenge_checks": [
+              129,
+              129
+            ]
+          },
+          {
+            "id": "patch-2",
+            "source_hash": "92803f8e1b5203fac375c3ac5313dada65c967e1491e3e4e7eca64caef0c43b1",
+            "public_passed": true,
+            "verified": true,
+            "checks": 50,
+            "failed": 0,
+            "challenge_checks": [
+              129,
+              129
+            ]
+          }
+        ],
+        "practice_checked": false,
+        "original_source_preserved": true
+      },
+      {
+        "case": "premature_success",
+        "passed": true,
+        "run_id": "57f6122a23b748bba6c0f64092860c1e",
+        "goal": "repair",
+        "mission_status": "achieved",
+        "requests": 3,
+        "model_decisions": "scripted_offline",
+        "simulator": "real_GHDL",
+        "attempts": [
+          {
+            "id": "patch-1",
+            "source_hash": "782d1b44ba42362993c2ae16cec7839c99a167f52e7fe2884894be675eed23b7",
+            "public_passed": true,
+            "verified": true,
+            "checks": 103,
+            "failed": 0,
+            "challenge_checks": [
+              247,
+              247
+            ]
+          }
+        ],
+        "practice_checked": false,
+        "original_source_preserved": true
+      },
+      {
+        "case": "duplicate_patch",
+        "passed": true,
+        "run_id": "fdc5885b64b94d1f821cf38376f87518",
+        "goal": "repair",
+        "mission_status": "achieved",
+        "requests": 4,
+        "model_decisions": "scripted_offline",
+        "simulator": "real_GHDL",
+        "attempts": [
+          {
+            "id": "patch-1",
+            "source_hash": "f7ab5ca14dac5117b19b64ec7ebbd2e3e5fe7ceb8ac35720f1d5ef89c43f6da2",
+            "public_passed": false,
+            "verified": false,
+            "checks": 103,
+            "failed": 70,
+            "challenge_checks": []
+          },
+          {
+            "id": "patch-2",
+            "source_hash": "782d1b44ba42362993c2ae16cec7839c99a167f52e7fe2884894be675eed23b7",
+            "public_passed": true,
+            "verified": true,
+            "checks": 103,
+            "failed": 0,
+            "challenge_checks": [
+              247,
+              247
+            ]
+          }
+        ],
+        "practice_checked": false,
+        "original_source_preserved": true
+      },
+      {
+        "case": "candidate_budget",
+        "passed": true,
+        "run_id": "92c4f43fea274c53923f2c63af56df28",
+        "goal": "repair",
+        "mission_status": "budget_exhausted",
+        "requests": 5,
+        "model_decisions": "scripted_offline",
+        "simulator": "real_GHDL",
+        "attempts": [
+          {
+            "id": "patch-1",
+            "source_hash": "dffcbe5d727d729b02835d35a2176b5c4b7cf0f2cec5bc3470e1c66e56e61c71",
+            "public_passed": false,
+            "verified": false,
+            "checks": 103,
+            "failed": 70,
+            "challenge_checks": []
+          },
+          {
+            "id": "patch-2",
+            "source_hash": "6bdafc0663eefc8bd00b7c25173579ee317a19f3456996c8285e068e022a3d16",
+            "public_passed": false,
+            "verified": false,
+            "checks": 103,
+            "failed": 70,
+            "challenge_checks": []
+          },
+          {
+            "id": "patch-3",
+            "source_hash": "3bdceaaa24ede39111bd3d91ae15ce0da6bb6e054ee640da6b9036bcb9f75f52",
+            "public_passed": false,
+            "verified": false,
+            "checks": 103,
+            "failed": 70,
+            "challenge_checks": []
+          }
+        ],
+        "practice_checked": false,
+        "original_source_preserved": true
+      },
+      {
+        "case": "best_version_retained",
+        "passed": true,
+        "run_id": "c31277ca2c5e40afb27c4bba713ce9c1",
+        "goal": "teach",
+        "mission_status": "completed",
+        "requests": 3,
+        "model_decisions": "scripted_offline",
+        "simulator": "real_GHDL",
+        "attempts": [
+          {
+            "id": "patch-1",
+            "source_hash": "782d1b44ba42362993c2ae16cec7839c99a167f52e7fe2884894be675eed23b7",
+            "public_passed": true,
+            "verified": true,
+            "checks": 103,
+            "failed": 0,
+            "challenge_checks": [
+              247,
+              247
+            ]
+          },
+          {
+            "id": "patch-2",
+            "source_hash": "f7ab5ca14dac5117b19b64ec7ebbd2e3e5fe7ceb8ac35720f1d5ef89c43f6da2",
+            "public_passed": false,
+            "verified": false,
+            "checks": 103,
+            "failed": 70,
+            "challenge_checks": []
+          }
+        ],
+        "practice_checked": false,
+        "original_source_preserved": true
+      },
+      {
+        "case": "wrong_answer_review",
+        "passed": true,
+        "run_id": "c5c9b55c71f147078eb89a9f7c791b3b",
+        "goal": "coach",
+        "mission_status": "practice_checked",
+        "requests": 3,
+        "model_decisions": "scripted_offline",
+        "simulator": "real_GHDL",
+        "attempts": [],
+        "practice_checked": true,
+        "original_source_preserved": true
+      },
+      {
+        "case": "correct_answer_check",
+        "passed": true,
+        "run_id": "687c6364a37a47d485cf0ee23bd5f80d",
+        "goal": "coach",
+        "mission_status": "practice_checked",
+        "requests": 3,
+        "model_decisions": "scripted_offline",
+        "simulator": "real_GHDL",
+        "attempts": [],
+        "practice_checked": true,
+        "original_source_preserved": true
+      },
+      {
+        "case": "interruption_checkpoint",
+        "passed": true,
+        "run_id": "0efcfcde1a1d4707aa042e0e604e7fba",
+        "goal": "repair",
+        "mission_status": "achieved",
+        "requests": 5,
+        "model_decisions": "scripted_offline",
+        "simulator": "real_GHDL",
+        "attempts": [
+          {
+            "id": "patch-1",
+            "source_hash": "f7ab5ca14dac5117b19b64ec7ebbd2e3e5fe7ceb8ac35720f1d5ef89c43f6da2",
+            "public_passed": false,
+            "verified": false,
+            "checks": 103,
+            "failed": 70,
+            "challenge_checks": []
+          },
+          {
+            "id": "patch-2",
+            "source_hash": "782d1b44ba42362993c2ae16cec7839c99a167f52e7fe2884894be675eed23b7",
+            "public_passed": true,
+            "verified": true,
+            "checks": 103,
+            "failed": 0,
+            "challenge_checks": [
+              247,
+              247
+            ]
+          }
+        ],
+        "practice_checked": false,
+        "original_source_preserved": true
+      }
+    ]
+  },
+  "real_cloud_experiments": {
+    "coach": {
+      "run_id": "f8364315dbf1477a9d770c4b0a202380",
+      "goal": "coach",
+      "mission_status": "needs_practice",
+      "model_error": null,
+      "original_source_hash": "e6c3e3359cd8425c9d334615358954a3dc0f0ff4e5fa4d89a417304e2ab65a89",
+      "baseline": {
+        "total": 103,
+        "failed": 45,
+        "passed": false
+      },
+      "rounds": 4,
+      "tool_calls": 4,
+      "final_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "requests": [
+        {
+          "round": 1,
+          "requested_model": "openrouter/free",
+          "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "response_id": "gen-1792772552-Eilw305lJ56Vq9aYOcqd",
+          "duration_ms": 8016,
+          "usage": {
+            "input_tokens": 5504,
+            "output_tokens": 119,
+            "total_tokens": 5623,
+            "reported_cost": 0
+          },
+          "tool_names": [
+            "read_learning_memory"
+          ]
+        },
+        {
+          "round": 2,
+          "requested_model": "openrouter/free",
+          "actual_model": "liquid/lfm-2.5-2.6b:free",
+          "response_id": "gen-1792772560-gpTwNQpxt7olYrIlXN3W",
+          "duration_ms": 83156,
+          "usage": {
+            "input_tokens": 4770,
+            "output_tokens": 615,
+            "total_tokens": 5385,
+            "reported_cost": 0
+          },
+          "tool_names": [
+            "inspect_contract",
+            "read_waveform"
+          ]
+        },
+        {
+          "round": 3,
+          "requested_model": "openrouter/free",
+          "actual_model": "recursive/flint-v1.0:free",
+          "response_id": "gen-1792772643-Q52GAWtNonrvpPwwTttb",
+          "duration_ms": 10688,
+          "usage": {
+            "input_tokens": 5778,
+            "output_tokens": 567,
+            "total_tokens": 6345,
+            "reported_cost": 0
+          },
+          "tool_names": [
+            "recommend_practice"
+          ]
+        },
+        {
+          "round": 4,
+          "requested_model": "openrouter/free",
+          "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "response_id": "gen-1792772654-vRMwYZHjAwa6ONZQYbRT",
+          "duration_ms": 16579,
+          "usage": {
+            "input_tokens": 8247,
+            "output_tokens": 595,
+            "total_tokens": 8842,
+            "reported_cost": 0
+          },
+          "tool_names": []
+        }
+      ],
+      "usage": {
+        "input_tokens": 24299,
+        "input_tokens_complete": true,
+        "output_tokens": 1896,
+        "output_tokens_complete": true,
+        "total_tokens": 26195,
+        "total_tokens_complete": true,
+        "reported_cost": 0.0,
+        "reported_cost_complete": true,
+        "scope": "仅包含本次已返回模型响应中服务商报告的用量；缺失值不视为零。"
+      },
+      "practice": {
+        "quiz_id": "counter_priority",
+        "submission_received": false
+      },
+      "attempts": []
+    },
+    "repair": {
+      "run_id": "5287b5b211874dd9a6c7c91ccbcbc0bf",
+      "goal": "repair",
+      "mission_status": "achieved",
+      "model_error": null,
+      "original_source_hash": "e6c3e3359cd8425c9d334615358954a3dc0f0ff4e5fa4d89a417304e2ab65a89",
+      "baseline": {
+        "total": 103,
+        "failed": 45,
+        "passed": false
+      },
+      "rounds": 5,
+      "tool_calls": 4,
+      "final_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "requests": [
+        {
+          "round": 1,
+          "requested_model": "openrouter/free",
+          "actual_model": "nvidia/nemotron-3.5-lightning:free",
+          "response_id": "gen-1792772785-mHmHF9uTzZxMWY7K2lgp",
+          "duration_ms": 15875,
+          "usage": {
+            "input_tokens": 5398,
+            "output_tokens": 670,
+            "total_tokens": 6068,
+            "reported_cost": 0
+          },
+          "tool_names": [
+            "propose_patch"
+          ]
+        },
+        {
+          "round": 2,
+          "requested_model": "openrouter/free",
+          "actual_model": "poolside/laguna-xs-2.1:free",
+          "response_id": "gen-1792772801-QpCtnXzoLfGYx5vH2s9z",
+          "duration_ms": 15344,
+          "usage": {
+            "input_tokens": 5695,
+            "output_tokens": 272,
+            "total_tokens": 5967,
+            "reported_cost": 0
+          },
+          "tool_names": [
+            "propose_patch"
+          ]
+        },
+        {
+          "round": 3,
+          "requested_model": "openrouter/free",
+          "actual_model": "recursive/flint-v1.0:free",
+          "response_id": "gen-1792772829-y3YV4rq73RcT8MWDVmOL",
+          "duration_ms": 11391,
+          "usage": {
+            "input_tokens": 9571,
+            "output_tokens": 735,
+            "total_tokens": 10306,
+            "reported_cost": 0
+          },
+          "tool_names": [
+            "read_learning_memory"
+          ]
+        },
+        {
+          "round": 4,
+          "requested_model": "openrouter/free",
+          "actual_model": "poolside/laguna-s-2.1:free",
+          "response_id": "gen-1792772841-7gjx9P3yznh65nD6SFWx",
+          "duration_ms": 10094,
+          "usage": {
+            "input_tokens": 12518,
+            "output_tokens": 139,
+            "total_tokens": 12657,
+            "reported_cost": 0
+          },
+          "tool_names": [
+            "recommend_practice"
+          ]
+        },
+        {
+          "round": 5,
+          "requested_model": "openrouter/free",
+          "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "response_id": "gen-1792772851-MYHXxhpBlzlOO8tSmB7l",
+          "duration_ms": 36016,
+          "usage": {
+            "input_tokens": 13822,
+            "output_tokens": 532,
+            "total_tokens": 14354,
+            "reported_cost": 0
+          },
+          "tool_names": []
+        }
+      ],
+      "usage": {
+        "input_tokens": 47004,
+        "input_tokens_complete": true,
+        "output_tokens": 2348,
+        "output_tokens_complete": true,
+        "total_tokens": 49352,
+        "total_tokens_complete": true,
+        "reported_cost": 0.0,
+        "reported_cost_complete": true,
+        "scope": "仅包含本次已返回模型响应中服务商报告的用量；缺失值不视为零。"
+      },
+      "practice": {
+        "quiz_id": "counter_priority",
+        "submission_received": false
+      },
+      "attempts": [
+        {
+          "id": "patch-1",
+          "status": "compile_error",
+          "source_hash": "b09759ca38a417acfd0245539c8fbc1b92d603eb38c7930a1cc71d327761af12",
+          "compiled": false,
+          "total": 0,
+          "failed": 0,
+          "verified": false,
+          "diagnostics": [
+            {
+              "line": 24,
+              "column": 17,
+              "message": "error: missing \";\" at end of architecture"
+            }
+          ],
+          "comparison": {
+            "comparable_checks": 0,
+            "corrected": 0,
+            "regressed": 0,
+            "examples": [],
+            "note": "同一输入、时间和参考值的采样对照；不构成硬件因果或任意输入正确性的证明。"
+          },
+          "challenges": []
+        },
+        {
+          "id": "patch-2",
+          "status": "passed",
+          "source_hash": "94269b9bdbc05c6c94c52a415d50832038ef7434fec44640bdc7d2ce4710d4e5",
+          "compiled": true,
+          "total": 103,
+          "failed": 0,
+          "verified": true,
+          "diagnostics": [],
+          "comparison": {
+            "comparable_checks": 103,
+            "corrected": 45,
+            "regressed": 0,
+            "examples": [
+              {
+                "index": 13,
+                "time_ns": 66,
+                "inputs": "reset=1, en=1",
+                "expected": 0,
+                "before": 4,
+                "after": 0,
+                "before_passed": false,
+                "after_passed": true
+              },
+              {
+                "index": 14,
+                "time_ns": 72,
+                "inputs": "before rising edge",
+                "expected": 0,
+                "before": 4,
+                "after": 0,
+                "before_passed": false,
+                "after_passed": true
+              },
+              {
+                "index": 15,
+                "time_ns": 76,
+                "inputs": "reset=0, en=0",
+                "expected": 0,
+                "before": 4,
+                "after": 0,
+                "before_passed": false,
+                "after_passed": true
+              }
+            ],
+            "note": "同一输入、时间和参考值的采样对照；不构成硬件因果或任意输入正确性的证明。"
+          },
+          "challenges": [
+            {
+              "seed": 1519965630,
+              "total": 247,
+              "failed": 0,
+              "passed": true,
+              "testbench_hash": "383cc26b0f5562b57920732d978ac0aad1f4791189b2d4b8dec25f3f65c9f814"
+            },
+            {
+              "seed": 3241160614,
+              "total": 247,
+              "failed": 0,
+              "passed": true,
+              "testbench_hash": "c811f16f03bf113a3df3a36f47eba0548d43d32a04e2a7ed104f3575b9533841"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "failed_first_coach": {
+    "run_id": "515b9b312fdc4dd3be2395c32cee6a26",
+    "model_error": "模型处理失败；本地仿真证据已保留。",
+    "mission_status": "incomplete",
+    "returned_request_audit": [
+      {
+        "round": 1,
+        "requested_model": "openrouter/free",
+        "actual_model": "poolside/laguna-s-2.1:free",
+        "response_id": "gen-1792772322-DZtbF6G30p0X83S4mxYs",
+        "duration_ms": 20641,
+        "usage": {
+          "input_tokens": 4521,
+          "output_tokens": 804,
+          "total_tokens": 5325,
+          "reported_cost": 0
+        },
+        "tool_names": [
+          "inspect_contract",
+          "read_learning_memory",
+          "read_waveform"
+        ]
+      },
+      {
+        "round": 2,
+        "requested_model": "openrouter/free",
+        "actual_model": "dots-studio/dots-3-note-preview:free",
+        "response_id": "gen-1792772345-3Yk41I0w2x9JWRQAhneq",
+        "duration_ms": 12921,
+        "usage": {
+          "input_tokens": 5547,
+          "output_tokens": 183,
+          "total_tokens": 5730,
+          "reported_cost": 0
+        },
+        "tool_names": [
+          "update_plan"
+        ]
+      },
+      {
+        "round": 3,
+        "requested_model": "openrouter/free",
+        "actual_model": "nvidia/nemotron-3.5-lightning:free",
+        "response_id": "gen-1792772356-gPMliuKbItPiujKlQzwK",
+        "duration_ms": 8125,
+        "usage": {
+          "input_tokens": 7544,
+          "output_tokens": 109,
+          "total_tokens": 7653,
+          "reported_cost": 0
+        },
+        "tool_names": [
+          "recommend_practice"
+        ]
+      }
+    ],
+    "note": "无效题号后发生处理异常，未计为成功；缺失用量未知。"
+  },
+  "http_rejection_regression": {
+    "before": {
+      "403": 9,
+      "ConnectionAbortedError": 3
+    },
+    "after": {
+      "403": 12
+    },
+    "quiz_records_after": 0,
+    "body_padding_bytes": 80000
+  },
+  "browser_checks": [
+    "目标选择",
+    "受控演示标记",
+    "失败与成功候选",
+    "同输入对照",
+    "版本波形与文件同步",
+    "真实带练等待作答",
+    "隔离库中的提交评分与任务反馈更新"
+  ],
+  "limitations": [
+    "中断可查但无自动续跑",
+    "当前任务近期结构化记忆，无向量检索",
+    "固定选择题评分，非自由回答评分",
+    "仿真不等于综合或板级验证",
+    "模型解释可能错误，未验证学生学习提升"
+  ]
+}

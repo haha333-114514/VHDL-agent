@@ -27,7 +27,9 @@ GHDL_PATH=C:/msys64/ucrt64/bin/ghdl.exe
 
 ## 当前可用功能
 
-v0.4 加固真实仿真的判定：未知电平不能按 0 通过，检查点必须与固定清单逐项一致，仿真超限不算完成。新增每轮实际模型、用量与服务报告费用记录；最终解释只展示模型最后一轮回复。实测与边界见 [v0.4 验证与改进](docs/v0.4验证与改进.md)。
+v0.5 增加“老师带练”和“自主修复”目标：可调整行动计划、按反馈迭代最多 3 个候选、读取失败版本、比较同输入下的前后变化，并根据当前任务的近期作答安排理解检查。学生实际作答后再评分和保存，下一次带练据此选题。说明、真实云调用与九个受控实验见 [v0.5 教师智能体与验证](docs/v0.5教师智能体与验证.md)。
+
+v0.4 的评分加固继续保留：未知电平不能按 0 通过，检查点与固定清单逐项一致，超限不算完成；逐轮记录实际模型与服务报告用量。见 [v0.4 验证与改进](docs/v0.4验证与改进.md)。
 
 候选修复需要先通过公开完整测试，再通过两组新种子的追加验证，才显示为已验证的候选版本。受控故障实验另外检查测试本身能否识别错误。
 
@@ -82,17 +84,20 @@ MODEL_PROTOCOL=chat_completions
 
 也可选择“自定义服务”：支持提供函数调用的 Chat Completions 兼容接口，或设置 `MODEL_PROTOCOL=responses` 使用 Responses API。不同平台的密钥不通用，接口兼容不代表模型免费，需确认平台的免费模型、额度及工具调用支持。
 
-模型实际可调用的五个工具：
+模型实际可调用的八个工具：
 
 | 工具 | 功能 |
 | --- | --- |
 | `inspect_contract` | 读取当前固定任务规格和接口 |
-| `run_simulation` | 自主选择基础、边界或完整测试集 |
-| `read_waveform` | 读取检查点附近的实际采样与参考值 |
-| `read_learning_memory` | 读取本机概念练习与运行统计 |
+| `run_simulation` | 对指定版本自主选择基础、边界或完整测试集 |
+| `read_waveform` | 读取指定版本的实际采样与参考值 |
+| `read_learning_memory` | 检索当前任务最近 6 次作答与 3 次运行，不读取旧源码 |
 | `propose_patch` | 在独立目录运行公开测试与两组新种子复核，不更改学生编辑器与规格 |
+| `update_plan` | 制定或调整 2–6 步行动计划，保留调整记录 |
+| `inspect_attempt` | 读取 baseline、latest 或 patch-1 等版本源码和失败摘要 |
+| `recommend_practice` | 从当前任务题库选择理解检查，默认优先近期错题和未做变式，不返回答案键 |
 
-每次最多 6 轮模型规划，必要时增加 1 轮不能执行工具的结果归纳，共不超过 7 次模型请求、8 次工具调用；单次请求超时 45 秒。模型失败时，已完成的本地仿真结果仍保留。模型解释属于模型输出，最终通过状态始终取自实际 GHDL 结果。
+模型模式可选择“老师带练”“自主修复”或“解释本次证据”。每次最多 6 轮模型规划，必要时增加 1 轮不能执行工具的结果归纳，共不超过 7 次模型请求、8 次工具调用；单次请求设 45 秒网络超时，最多 3 个不同候选。修复完成由程序检查，不能以模型提前的文字总结代替。模型失败时已有证据和逐轮记录保留。过程快照支持中断后查看与重新运行，尚不支持自动续跑。
 
 实现依据：[OpenRouter 工具调用文档](https://openrouter.ai/docs/guides/features/tool-calling)和 [OpenAI 官方 function calling 文档](https://developers.openai.com/api/docs/guides/function-calling)。本机未配置模型密钥时，真实云模型调用不可验证；测试使用明确标注的模拟传输验证协议与工具编排。
 
@@ -117,6 +122,7 @@ node --check web/app.js
 python tools/evaluate.py
 python tools/audit_grading.py --label current
 python tools/evaluate_innovations.py
+python tools/evaluate_teacher_agent.py
 python tools/package.py
 ```
 
@@ -124,7 +130,7 @@ Node 仅用于可选的 JavaScript 语法检查，运行应用本身不需要它
 
 评估脚本在 `data/evaluation/` 保存真实结果、源码哈希和完整日志。这是固定教学集的工程回归，不能宣称为模型泛化能力、自动修复成功率或学生学习效果实验。
 
-打包输出：`dist/zhidian-v0.4-source.zip`。排除 `.env`、学习数据和运行产物；包含 `.env.example`、源码、说明与演示资料。GHDL / Python 需要在评审机器单独安装。
+打包输出：`dist/zhidian-v0.5-source.zip`。排除 `.env`、学习数据和运行产物；包含 `.env.example`、源码、说明与演示资料。GHDL / Python 需要在评审机器单独安装。
 
 ## 创新实验与重放
 
@@ -144,7 +150,8 @@ python tools/evaluate_innovations.py
 - [三分钟演示脚本](docs/演示脚本.md)：可直接照着录制的本地演示流程。
 - [架构与验证](docs/架构与验证.md)：工具循环、参考模型、数据保存和评估方法。
 - [课程扩展实验](docs/课程扩展实验.md)：截图标题映射、七个新增实验与功能 / 器件验证边界。
-- [验证记录](docs/验证记录.md)：55 项自动化测试、固定教学集回归与浏览器核验范围。
+- [验证记录](docs/验证记录.md)：自动化测试、固定教学集回归与浏览器核验范围。
+- [v0.5 教师智能体与验证](docs/v0.5教师智能体与验证.md)：教师带练、两种真实云目标、九个受控实验与后续路线。
 - [v0.4 验证与改进](docs/v0.4验证与改进.md)：两类误判的修复前后对照、评分清单与真实免费模型逐轮记录。
 - [v0.3 云模型复核](docs/v0.3云模型复核.md)：真实免费模型工具循环与 103＋247＋247 个检查点结果。
 - `server.py`：本机 HTTP 服务与 API。
@@ -152,6 +159,7 @@ python tools/evaluate_innovations.py
 - `zhidian/extended_catalog.py`：七个新增实验、独立参考向量和受控 textio 测试平台。
 - `zhidian/simulator.py`：GHDL 执行、日志解析和证据诊断。
 - `zhidian/grading.py`：固定检查清单、非二值输出与日志完整性判定。
+- `zhidian/mission.py`：目标、行动计划、取证与真实完成条件。
 - `zhidian/service.py`：实验编排、工具分发、产物与报告。
 - `zhidian/provider.py`：可选模型配置、免费预设与两种 API 协议的工具循环。
 - `zhidian/storage.py`：SQLite 学习记录。

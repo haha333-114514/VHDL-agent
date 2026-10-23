@@ -52,7 +52,7 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(sent["auth"], "Bearer test-only-key")
         self.assertFalse(sent["body"]["store"])
         self.assertEqual(sent["body"]["model"], "test-model")
-        self.assertEqual(len(sent["body"]["tools"]), 5)
+        self.assertEqual(len(sent["body"]["tools"]), 8)
 
     def test_redirect_does_not_forward_an_authorization_header(self):
         with self.assertRaisesRegex(RuntimeError, "302"):

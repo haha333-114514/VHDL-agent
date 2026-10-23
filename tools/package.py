@@ -8,7 +8,7 @@ EXCLUDED = {"data", "dist", ".git", "__pycache__", "node_modules", ".pytest_cach
 
 
 def main():
-    output = ROOT / "dist" / "zhidian-v0.4-source.zip"
+    output = ROOT / "dist" / "zhidian-v0.5-source.zip"
     output.parent.mkdir(exist_ok=True)
     count = 0
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive:

@@ -73,6 +73,14 @@ class HTTPTests(unittest.TestCase):
         code, _ = self.request("/api/health", headers={"Host": "evil.invalid"})
         self.assertEqual(code, 403)
 
+    def test_large_rejected_post_delivers_error_without_recording_a_quiz(self):
+        before = self.service.store.profile()["quiz_count"]
+        for _ in range(6):
+            code, result = self.request("/api/quiz", {"quiz_id": "counter_priority", "choice": 1, "padding": "x"*80000}, {"X-Zhidian-Token": "wrong"})
+            self.assertEqual(code, 403)
+            self.assertIn("error", result)
+        self.assertEqual(self.service.store.profile()["quiz_count"], before)
+
     def test_static_path_traversal_is_rejected(self):
         code, _ = self.request("/%2e%2e/server.py")
         self.assertEqual(code, 404)
@@ -92,6 +100,8 @@ class HTTPTests(unittest.TestCase):
 
     def test_invalid_user_inputs_have_clear_errors(self):
         code, data = self.request("/api/run", {"task_id": "missing", "source": "entity a is end;"})
+        self.assertEqual(code, 400)
+        code, _ = self.request("/api/run", {"task_id": "counter", "source": TASKS["counter"]["starter"], "mode": "model", "goal": {"invalid": True}})
         self.assertEqual(code, 400)
         self.assertIn("error", data)
         code, _ = self.request("/api/quiz", {"quiz_id": "counter_priority", "choice": True})

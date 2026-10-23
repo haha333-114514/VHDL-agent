@@ -2,7 +2,7 @@
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
-const state = { tasks: [], task: null, health: null, csrf: "", run: null, busy: false, sample: 0, hints: {}, quizzes: [], quizIndex: 0, quizChoice: null, quizResult: null, view: "workspace", provider: null, taskFilter: "core", artifactUrl: "" };
+const state = { tasks: [], task: null, health: null, csrf: "", run: null, busy: false, sample: 0, evidenceAttempt: "baseline", hints: {}, quizzes: [], quizIndex: 0, quizChoice: null, quizResult: null, view: "workspace", provider: null, taskFilter: "core", artifactUrl: "" };
 const escapeHTML = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
 const valueLabel = (value) => value === null ? "非 0/1" : value === -999 ? "U / X" : String(value);
 const statusNames = { passed: "通过", failed: "有反例", compile_error: "编译未通过", runtime_error: "运行未完成", integrity_error: "证据不完整", limit: "执行超限" };
@@ -61,6 +61,7 @@ async function selectTask(taskId, sourceOverride, keepRun = false) {
     state.run = null;
     state.hints = {};
     state.sample = 0;
+    state.evidenceAttempt = "baseline";
     $("#diagnosis-content").hidden = true;
     $("#empty-state").hidden = false;
     $("#trace-list").innerHTML = "";
@@ -97,7 +98,7 @@ function setBusy(busy) {
   $("#run-button").classList.toggle("running", busy);
   $("#run-button span").textContent = busy ? "正在检查" : "检查并诊断";
   $("#source-code").readOnly = busy;
-  ["#reset-button", "#import-button", "#run-mode", "#student-question", "#start-demo"].forEach((selector) => { $(selector).disabled = busy; });
+  ["#reset-button", "#import-button", "#run-mode", "#student-question", "#agent-goal", "#start-demo"].forEach((selector) => { $(selector).disabled = busy; });
   renderTasks();
   updateCodeGutter();
 }
@@ -114,6 +115,27 @@ function renderTrace() {
   $("#trace-list").innerHTML = events.length ? events.map((event) => `<li><span class="trace-icon ${escapeHTML(event.state)}" aria-label="${event.state === "running" ? "运行中" : "已返回"}">${({ done: "✓", attention: "!", skipped: "–", running: "" })[event.state] || "·"}</span><div class="trace-title"><span>${escapeHTML(event.title)}</span><small>${escapeHTML(event.at.slice(11, 19))}</small></div><p>${escapeHTML(event.detail)}</p></li>`).join("") : '<li class="muted">运行后显示工具轨迹。</li>';
 }
 
+function renderMission(job) {
+  const mission = job.agent;
+  if (!mission) return "";
+  const labels = { running: "正在行动", achieved: "修复已验证", completed: "解释已返回", needs_practice: "等待你作答", practice_checked: "已记录作答", budget_exhausted: "本轮未修好", incomplete: "目标未完成", interrupted: "运行已中断" };
+  let html = `<section class="mission-card" aria-label="智能体任务"><div class="mission-heading"><strong>${escapeHTML(mission.title)}</strong><span>${labels[mission.status] || escapeHTML(mission.status)}</span></div><p>${escapeHTML(mission.stop_reason || mission.acceptance)}</p><details open><summary>行动计划 · ${escapeHTML(mission.plan_origin)} · 第 ${mission.plan_revision} 次调整</summary><ol>${mission.plan.map(step => `<li>${escapeHTML(step.purpose)}<small>${step.observations ? `工具取证 ${step.observations} 次` : job.status === "running" ? "待行动" : "未额外调用"}</small></li>`).join("")}</ol><p class="faint-note">可利用已有基线证据调整步骤；工具返回不等于修复成功。</p></details>`;
+  if (job.evaluation) html += `<p class="evaluation-label">${escapeHTML(job.evaluation.note)}</p>`;
+  if (job.attempts?.length) html += `<div class="attempt-list"><strong>修改实验 · ${job.attempts.length} / ${mission.max_attempts}</strong>${job.attempts.map(attempt => {
+    const comparison = attempt.comparison;
+    const contrast = comparison ? `<div class="counterexample-contrast"><p>${comparison.comparable_checks ? `同一输入对照：纠正 ${comparison.corrected} 点，新增不一致 ${comparison.regressed} 点。` : "暂无可对照的有效采样，请先查看编译或运行日志。"}</p>${comparison.examples.map(row => `<p>检查点 #${row.index} · ${row.time_ns} ns · ${escapeHTML(row.inputs)}<br>原始 ${escapeHTML(valueLabel(row.before))} → 候选 ${escapeHTML(valueLabel(row.after))}；参考 ${row.expected}</p>`).join("")}</div>` : "";
+    const stage = attempt.verified ? "公开 + 两组追加通过" : statusNames[attempt.result.status] || "尚未验证通过";
+    const count = attempt.result.total ? ` · ${attempt.result.total - attempt.result.failed}/${attempt.result.total}` : "";
+    const compileHint = attempt.result.diagnostics?.[0];
+    return `<article><div><b>${escapeHTML(attempt.id)}</b><span>${escapeHTML(stage)}${count}</span></div><p>${escapeHTML(attempt.explanation)}</p>${compileHint ? `<p>GHDL · L${compileHint.line}：${escapeHTML(compileHint.message)}</p>` : ""}${contrast}<code>源码 SHA-256：${escapeHTML(attempt.result.source_hash)}</code><button class="text-button" data-version="${escapeHTML(attempt.id)}">查看此版本反例与波形 ↗</button><details><summary>查看 ${escapeHTML(attempt.id)} 源码</summary><pre>${escapeHTML(attempt.source)}</pre></details></article>`;
+  }).join("")}</div>`;
+  if (mission.practice) {
+    const practice = mission.practice;
+    html += `<div class="teacher-practice"><strong>老师安排的理解检查</strong><p>${escapeHTML(practice.reason)}</p><p>${escapeHTML(practice.basis)}</p><p>${escapeHTML(practice.quiz.question)}</p>${practice.submission ? `<p>${practice.submission.correct ? "本次回答正确" : "本次答错，建议复习"}：${escapeHTML(practice.submission.feedback)}</p>` : ""}<button class="button button-outline small" data-agent-practice="${escapeHTML(practice.quiz.id)}">${practice.submission ? "再做一次理解检查" : "先预测，再检验理解"}</button></div>`;
+  }
+  return html + "</section>";
+}
+
 function renderDiagnosis() {
   const job = state.run;
   if (!job) return;
@@ -121,11 +143,11 @@ function renderDiagnosis() {
   const container = $("#diagnosis-content");
   container.hidden = false;
   if (job.status === "error") {
-    container.innerHTML = `<div class="diagnosis-inner"><div class="result-banner compile"><div class="result-eyebrow">本次执行未完成</div><h3>请检查运行条件</h3><p>${escapeHTML(job.error)}</p></div></div>`;
+    container.innerHTML = `<div class="diagnosis-inner">${renderMission(job)}<div class="result-banner compile"><div class="result-eyebrow">本次执行未完成</div><h3>请检查运行条件</h3><p>${escapeHTML(job.error)}</p></div></div>`;
     return;
   }
   if (!job.result) {
-    container.innerHTML = '<div class="working-message"><span class="spinner"></span><p>正在调用本机 GHDL…<br>检查点与结论将在真实结果返回后显示。</p></div>';
+    container.innerHTML = renderMission(job) + '<div class="working-message"><span class="spinner"></span><p>正在调用本机 GHDL…<br>检查点与结论将在真实结果返回后显示。</p></div>';
     return;
   }
   const result = job.result;
@@ -133,7 +155,7 @@ function renderDiagnosis() {
   const isPass = result.passed;
   const kind = isPass ? "pass" : result.compiled && result.completed ? "" : "compile";
   const improvedCoverage = job.smoke?.passed && !result.passed && result.completed;
-  let html = `<div class="diagnosis-inner"><div class="result-banner ${kind}"><div class="result-eyebrow">${job.reference_run ? "教学参考版本 · 独立验证" : job.mode === "model" ? "真实仿真结果 · 模型增强" : "真实仿真结果 · 本地证据诊断"}</div><h3>${escapeHTML(diagnosis.title)}</h3><p>${escapeHTML(diagnosis.explanation)}</p></div>`;
+  let html = `<div class="diagnosis-inner">${renderMission(job)}<div class="result-banner ${kind}"><div class="result-eyebrow">${job.reference_run ? "教学参考版本 · 独立验证" : job.mode === "model" ? "真实仿真结果 · 模型增强" : "真实仿真结果 · 本地证据诊断"}</div><h3>${escapeHTML(diagnosis.title)}</h3><p>${escapeHTML(diagnosis.explanation)}</p></div>`;
   if (result.completed) {
     html += `<div class="result-metrics"><div class="metric-box"><strong>${result.total - result.failed}<span> / ${result.total}</span></strong><span>检查点通过</span></div><div class="metric-box"><strong>${result.failed}</strong><span>不一致检查点</span></div><div class="metric-box"><strong>${(result.duration_ms / 1000).toFixed(1)}<span> s</span></strong><span>完整测试耗时</span></div></div>`;
   }
@@ -230,10 +252,11 @@ async function startRun(action) {
   const source = $("#source-code").value;
   writeLocal(`zhidian-draft-${state.task.id}`, source);
   try {
-    const run = await api("/api/run", { task_id: state.task.id, source, mode, question: $("#student-question").value, action });
+    const run = await api("/api/run", { task_id: state.task.id, source, mode, goal: $("#agent-goal").value, question: $("#student-question").value, action });
     state.run = { id: run.id, status: "running", events: [], result: null, source };
     state.hints = {};
     state.sample = 0;
+    state.evidenceAttempt = "baseline";
     setBusy(true);
     renderRun();
     setEvidenceTab("trace");
@@ -265,8 +288,17 @@ async function showArtifact() {
   } catch(error) { if(state.artifactUrl===url) { state.artifactUrl=""; $("#artifact-source").textContent=error.message; } }
 }
 
+function evidenceResult() {
+  return (state.run?.attempts || []).find(row => row.id === state.evidenceAttempt)?.result || state.run?.result;
+}
+
 function renderWave() {
-  const result = state.run?.result;
+  const attempts = state.run?.attempts || [];
+  if (!attempts.some(row => row.id === state.evidenceAttempt)) state.evidenceAttempt = "baseline";
+  $("#version-picker").hidden = !attempts.length;
+  $("#evidence-version").innerHTML = '<option value="baseline">原始代码</option>' + attempts.map(row => `<option value="${escapeHTML(row.id)}">${escapeHTML(row.id)} · ${row.verified ? "已验证候选" : "未通过候选"}</option>`).join("");
+  $("#evidence-version").value = state.evidenceAttempt;
+  const result = evidenceResult();
   const checks = result?.checks || [];
   $("#wave-placeholder").hidden = checks.length > 0;
   $("#wave-content").hidden = checks.length === 0;
@@ -315,7 +347,7 @@ function renderWave() {
 }
 
 function nextFailure(direction) {
-  const checks = state.run?.result?.checks || [];
+  const checks = evidenceResult()?.checks || [];
   if (!checks.length) return;
   let index = state.sample;
   for (let count = 0; count < checks.length; count++) {
@@ -337,7 +369,10 @@ async function submitQuiz() {
   const button = $("#submit-quiz");
   if (button) button.disabled = true;
   try {
-    state.quizResult = await api("/api/quiz", { quiz_id: state.quizzes[state.quizIndex].id, choice: state.quizChoice });
+    const quizId = state.quizzes[state.quizIndex].id;
+    const runId = state.run?.agent?.practice?.quiz.id === quizId ? state.run.id : undefined;
+    state.quizResult = await api("/api/quiz", { quiz_id: quizId, choice: state.quizChoice, run_id: runId });
+    if (state.quizResult.agent) { state.run.agent = state.quizResult.agent; renderDiagnosis(); }
     renderQuiz();
   } catch (error) { toast(error.message); if (button) button.disabled = false; }
 }
@@ -365,12 +400,14 @@ async function loadHistory(runId) {
   try {
     const run = await api(`/api/runs/${runId}`);
     state.run = run;
+    state.evidenceAttempt = "baseline";
     state.hints = {};
     await selectTask(run.task_id, run.source, true);
     $("#run-mode").value = run.mode;
+    $("#agent-goal").value = run.agent?.goal || "teach";
     $("#question-wrap").hidden = run.mode !== "model";
     $("#student-question").value = run.question || "";
-    const failure = run.result.checks.findIndex((check) => !check.passed);
+    const failure = (run.result?.checks || []).findIndex((check) => !check.passed);
     state.sample = failure >= 0 ? failure : 0;
     location.hash = "workspace";
     navigate("workspace");
@@ -406,6 +443,7 @@ function downloadText(text, filename, mime) {
 function bindEvents() {
   $("#task-filters").addEventListener("click",event=>{ const button=event.target.closest("[data-task-filter]"); if(!button || state.busy) return; state.taskFilter=button.dataset.taskFilter; renderTasks(); if(state.taskFilter!=="all" && Boolean(state.task?.chapter)!==(state.taskFilter==="extended")) { const task=state.tasks.find(task=>Boolean(task.chapter)===(state.taskFilter==="extended")); if(task) selectTask(task.id); } });
   $("#artifact-select").addEventListener("change",showArtifact);
+  $("#evidence-version").addEventListener("change", () => { state.evidenceAttempt = $("#evidence-version").value; state.sample = 0; renderWave(); });
   $("#task-grid").addEventListener("click", (event) => { const button = event.target.closest("[data-task]"); if (button) selectTask(button.dataset.task); });
   $("#source-code").addEventListener("input", () => { updateCodeGutter(); writeLocal(`zhidian-draft-${state.task.id}`, $("#source-code").value); });
   $("#source-code").addEventListener("scroll", () => { $("#line-numbers").scrollTop = $("#source-code").scrollTop; });
@@ -422,6 +460,10 @@ function bindEvents() {
   $$("[data-evidence]").forEach((button) => button.addEventListener("click", () => setEvidenceTab(button.dataset.evidence)));
   $$("[data-data]").forEach((button) => button.addEventListener("click", () => setDataTab(button.dataset.data)));
   $("#diagnosis-content").addEventListener("click", async (event) => {
+    const practice = event.target.closest("[data-agent-practice]");
+    if (practice) { const index = state.quizzes.findIndex(row => row.id === practice.dataset.agentPractice); if (index >= 0) { state.quizIndex = index; state.quizChoice = null; state.quizResult = null; renderQuiz(); $("#practice-section").scrollIntoView({ behavior: "smooth", block: "center" }); } }
+    const version = event.target.closest("[data-version]");
+    if (version) { state.evidenceAttempt = version.dataset.version; state.sample = 0; renderWave(); setDataTab("wave"); $("#wave-section").scrollIntoView({ behavior: "smooth", block: "start" }); }
     const hint = event.target.closest("[data-hint]");
     if (hint) {
       const level = Number(hint.dataset.hint);
@@ -445,7 +487,7 @@ function bindEvents() {
   $("#previous-failure").addEventListener("click", () => nextFailure(-1));
   $("#next-failure").addEventListener("click", () => nextFailure(1));
   $("#checks-body").addEventListener("click", (event) => { const button = event.target.closest("[data-sample]"); if (button) { state.sample = Number(button.dataset.sample); renderWave(); setDataTab("wave"); } });
-  $("#wave-chart").addEventListener("click", (event) => { const svg = event.target.closest("svg"); const checks = state.run?.result?.checks || []; if (!svg || !checks.length) return; const box = svg.getBoundingClientRect(); const value = ((event.clientX - box.left) / box.width * 1000 - 88) / 887 * checks[checks.length - 1].time_ns; state.sample = checks.reduce((best, row, index) => Math.abs(row.time_ns - value) < Math.abs(checks[best].time_ns - value) ? index : best, 0); renderWave(); });
+  $("#wave-chart").addEventListener("click", (event) => { const svg = event.target.closest("svg"); const checks = evidenceResult()?.checks || []; if (!svg || !checks.length) return; const box = svg.getBoundingClientRect(); const value = ((event.clientX - box.left) / box.width * 1000 - 88) / 887 * checks[checks.length - 1].time_ns; state.sample = checks.reduce((best, row, index) => Math.abs(row.time_ns - value) < Math.abs(checks[best].time_ns - value) ? index : best, 0); renderWave(); });
   $("#export-button").addEventListener("click", () => { if (state.run?.status === "complete") { const link = document.createElement("a"); link.href = `/api/runs/${state.run.id}/report`; link.download = `zhidian-${state.task.id}.md`; link.click(); } });
   $("#quiz-area").addEventListener("click", (event) => { const option = event.target.closest("[data-choice]"); if (option && !state.quizResult) { state.quizChoice = Number(option.dataset.choice); renderQuiz(); } if (event.target.closest("#submit-quiz")) submitQuiz(); if (event.target.closest("#next-quiz")) { state.quizIndex = (state.quizIndex + 1) % state.quizzes.length; state.quizChoice = null; state.quizResult = null; renderQuiz(); } });
   $("#settings-button").addEventListener("click", openSettings);

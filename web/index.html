@@ -24,7 +24,7 @@
     </nav>
     <div class="sidebar-bottom">
       <div class="engine-card"><span class="status-dot" id="engine-dot"></span><div><strong id="engine-label">正在连接工具</strong><small>本机执行 · 证据可追溯</small></div></div>
-      <div class="sidebar-foot"><span>为理解而验证</span><span>v0.4</span></div>
+      <div class="sidebar-foot"><span>为理解而验证</span><span>v0.5</span></div>
     </div>
   </aside>
 
@@ -53,7 +53,7 @@
             <div class="code-editor"><div class="line-numbers" id="line-numbers" aria-hidden="true"></div><textarea id="source-code" aria-label="VHDL 源码编辑器" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea></div>
             <div class="editor-footer"><span id="code-state">可编辑示例 · Ctrl + Enter 运行</span><button class="text-button" id="download-source">保存源码</button></div>
             <div class="run-controls"><label class="mode-select-label" for="run-mode">诊断方式</label><select id="run-mode"><option value="local">本地证据诊断</option><option value="model">模型智能体 · 工具调用</option></select><button class="button button-primary run-button" id="run-button"><svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></svg><span>检查并诊断</span></button></div>
-            <div class="question-wrap" id="question-wrap" hidden><label for="student-question">想重点弄懂什么？<span>选填</span></label><textarea id="student-question" rows="2" maxlength="4000" placeholder="例如：为什么普通输入都通过，同时复位和使能时却失败？"></textarea></div>
+            <div class="question-wrap" id="question-wrap" hidden><label for="agent-goal">本轮目标</label><select id="agent-goal"><option value="coach">老师带练 · 提示与理解检查</option><option value="repair">自主修复 · 多轮实验与验证</option><option value="teach">解释本次证据</option></select><p class="faint-note">带练结合近期作答安排练习；自主修复最多尝试 3 个候选。编辑器由你决定是否应用修改。</p><label for="student-question">想重点弄懂什么？<span>选填</span></label><textarea id="student-question" rows="2" maxlength="4000" placeholder="例如：先提示我观察哪一拍，不要直接告诉我练习题答案。"></textarea></div>
           </section>
 
           <section class="evidence-card" aria-label="诊断结果与执行轨迹">
@@ -69,6 +69,7 @@
 
         <section class="wave-card" id="wave-section" aria-label="检查点采样与原始日志">
           <div class="card-heading"><div><span class="step-number">03</span><h2>看见差异，理解时序</h2><span class="subtle-tag">真实仿真采样</span></div><div class="wave-actions"><button class="text-button" id="previous-failure" disabled>上个反例</button><button class="text-button" id="next-failure" disabled>下个反例</button><a class="text-button" id="vcd-download" hidden>下载 VCD ↗</a></div></div>
+          <div class="version-picker" id="version-picker" hidden><label for="evidence-version">查看实验版本</label><select id="evidence-version"><option value="baseline">原始代码</option></select><span>波形、检查点和文件同步切换；诊断区仍保留原始代码结果。</span></div>
           <div class="wave-tabs" role="tablist" aria-label="仿真证据"><button class="active" data-data="wave" role="tab" aria-selected="true">采样波形</button><button data-data="checks" role="tab" aria-selected="false">检查点列表</button><button data-data="logs" role="tab" aria-selected="false">工具日志</button><button data-data="artifacts" role="tab" aria-selected="false">验证资料</button></div>
           <div id="wave-data-panel"><div class="wave-placeholder" id="wave-placeholder"><span class="placeholder-line"></span><p>完成一次仿真后，在这里对照预期与实际输出。</p></div><div id="wave-content" hidden><div class="wave-legend"><span><i class="legend-reference"></i>参考值 · 独立模型</span><span><i class="legend-actual"></i>实际值 · GHDL</span><span><i class="legend-failure"></i>不一致检查点</span></div><div id="wave-chart"></div><div class="sample-inspector" id="sample-inspector"></div><p class="sampling-note">阶梯连线展示离散检查点，检查点之间的事件不在此图中。完整事件波形请下载 VCD。</p></div></div>
           <div id="checks-data-panel" hidden><div class="table-scroll"><table><thead><tr><th>检查点</th><th>时间</th><th>输入 / 条件</th><th>预期</th><th>实际</th><th>结果</th></tr></thead><tbody id="checks-body"></tbody></table></div></div>

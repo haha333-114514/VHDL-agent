@@ -72,3 +72,11 @@ class Store:
                 state = "待探索" if not runs["n"] and not quizzes["n"] else "建议复习" if latest and not latest["correct"] else "已练习" if quizzes["correct"] else "待检验理解"
                 concepts.append({"task_id": task["id"], "name": task["concept_name"], "runs": runs["n"], "passed_runs": runs["passed"], "quiz_count": quizzes["n"], "quiz_correct": quizzes["correct"], "state": state})
         return {"run_count": run_count, "passed_runs": student_passed, "quiz_count": quiz_count, "quiz_correct": quiz_correct, "concepts": concepts, "note": "仿真通过记录代码表现；答题记录当前练习表现。二者均不等同于已掌握知识。"}
+
+    def task_memory(self, task_id: str) -> dict:
+        """Small, task-scoped retrieval; no old source code or quiz answer keys."""
+        with self.connect() as db:
+            quizzes = [dict(row) for row in db.execute("SELECT quiz_id,choice,correct,created FROM quizzes WHERE task_id=? ORDER BY id DESC LIMIT 6", (task_id,))]
+            runs = [dict(row) for row in db.execute("SELECT id,status,total,failed,reference_run,created FROM runs WHERE task_id=? ORDER BY rowid DESC LIMIT 3", (task_id,))]
+        return {"task_id": task_id, "recent_quizzes": quizzes, "recent_runs": runs,
+                "note": "仅为当前任务的近期表现，不推断已掌握；不包含旧源码或题目答案。"}

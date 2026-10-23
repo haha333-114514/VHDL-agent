@@ -36,7 +36,7 @@ class LocalHTTPServer(ThreadingHTTPServer):
 def make_handler(service: Service):
     csrf = secrets.token_urlsafe(32)
     class Handler(BaseHTTPRequestHandler):
-        server_version = "Zhidian/0.4"
+        server_version = "Zhidian/0.5"
 
         def log_message(self, fmt, *args):
             # Never log request bodies, source code or credentials.
@@ -69,6 +69,19 @@ def make_handler(service: Service):
         def send_json(self, data, code=200):
             self.send_bytes(json.dumps(data, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8", code)
 
+        def reject_post(self, message: str, code: int):
+            # Closing a Windows socket with an unread POST body can reset it
+            # before the browser receives the rejection. Discard only bounded
+            # bodies, without parsing or performing any application action.
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if 0 < length <= 100000:
+                    self.connection.settimeout(3)
+                    self.rfile.read(length)
+            except (OSError, ValueError):
+                pass
+            return self.send_json({"error": message}, code)
+
         def do_GET(self):
             if not self.allowed_host():
                 return self.send_json({"error": "仅允许本机访问。"}, 403)
@@ -76,7 +89,7 @@ def make_handler(service: Service):
             path = unquote(parsed.path)
             try:
                 if path == "/api/health":
-                    return self.send_json({"ok": True, "name": "知电", "version": "0.4.0", "ghdl": bool(find_ghdl()), "provider": service.config.public(), "csrf": csrf})
+                    return self.send_json({"ok": True, "name": "知电", "version": "0.5.0", "ghdl": bool(find_ghdl()), "provider": service.config.public(), "csrf": csrf})
                 if path == "/api/tasks":
                     return self.send_json({"tasks": [public_task(task) for task in TASKS.values()]})
                 if path == "/api/profile":
@@ -128,9 +141,9 @@ def make_handler(service: Service):
             origin = self.headers.get("Origin")
             expected = "http://" + self.headers.get("Host", "")
             if not self.allowed_host() or (origin and origin != expected) or self.headers.get("X-Zhidian-Token") != csrf:
-                return self.send_json({"error": "请求来源校验失败，请刷新本地页面。"}, 403)
+                return self.reject_post("请求来源校验失败，请刷新本地页面。", 403)
             if self.headers.get("Content-Type", "").split(";", 1)[0] != "application/json":
-                return self.send_json({"error": "仅接受 JSON 请求。"}, 415)
+                return self.reject_post("仅接受 JSON 请求。", 415)
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 if not 0 < length <= 100000:
@@ -156,6 +169,8 @@ def make_handler(service: Service):
                     choice = values.get("choice")
                     if type(choice) is not int or not 0 <= choice < len(quiz["options"]):
                         raise ValueError("请选择一个有效答案。")
+                    if values.get("run_id"):
+                        return self.send_json(service.answer_practice(values["run_id"], quiz_id, choice))
                     return self.send_json(service.store.save_quiz(quiz_id, quiz, choice))
                 self.send_json({"error": "未找到接口。"}, 404)
             except (ValueError, TypeError) as exc:
