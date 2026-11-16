@@ -80,9 +80,30 @@ class Service:
     def checkpoint(self, job: dict) -> None:
         with self.lock:
             directory = self.directory / "runs" / job["id"]
+            checkpoint = directory / "run.json"
             temporary = directory / "run.json.tmp"
             temporary.write_text(json.dumps(job, ensure_ascii=False, indent=2), encoding="utf-8")
-            temporary.replace(directory / "run.json")
+            for attempt in range(6):
+                try:
+                    temporary.replace(checkpoint)
+                    return
+                except PermissionError as exc:
+                    # Open file handles on Windows can briefly prevent atomic replacement.
+                    if getattr(exc, "winerror", None) not in {5, 32, 33} or attempt == 5:
+                        raise
+                    time.sleep(0.02 * 2 ** attempt)
+
+    @staticmethod
+    def artifact_url(directory: Path, path: str) -> str:
+        artifact = Path(path).resolve()
+        if not artifact.is_relative_to(directory):
+            # A saved snapshot can retain absolute paths from before a project move.
+            for parent in artifact.parents:
+                if parent.name == directory.name and parent.parent.name == "runs":
+                    artifact = (directory / artifact.relative_to(parent)).resolve()
+                    break
+        relative = artifact.relative_to(directory).as_posix()
+        return f"/api/runs/{directory.name}/artifact/{relative}"
 
     @staticmethod
     def attempt(job: dict, attempt_id=None) -> dict:
@@ -321,17 +342,16 @@ class Service:
         results = [job.get("result"), job.get("smoke"), (job.get("candidate") or {}).get("result"), *(job.get("candidate") or {}).get("challenges", [])]
         for attempt in job.get("attempts", []):
             results.extend([attempt["result"], *attempt["challenges"]])
+        directory = self.directory / "runs" / run_id
         for result in results:
             if result:
                 wave = result.pop("wave_file", None)
                 if wave:
-                    relative = Path(wave).resolve().relative_to(self.directory / "runs" / run_id).as_posix()
-                    result["wave_url"] = f"/api/runs/{run_id}/artifact/{relative}"
+                    result["wave_url"] = self.artifact_url(directory, wave)
                 for artifact in result.get("files",[]):
                     filepath = artifact.pop("path",None)
                     if filepath:
-                        relative = Path(filepath).resolve().relative_to(self.directory / "runs" / run_id).as_posix()
-                        artifact["url"] = f"/api/runs/{run_id}/artifact/{relative}"
+                        artifact["url"] = self.artifact_url(directory, filepath)
         return job
 
     def hint(self, run_id: str, level: int) -> dict:

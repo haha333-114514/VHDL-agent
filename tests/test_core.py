@@ -175,6 +175,52 @@ class ModelLoopTests(unittest.TestCase):
             config.update({"base": "https://user:pass@example.com/v1", "model": "test"})
 
 
+class RunPersistenceTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name).resolve()
+        self.service = Service(self.root / "current")
+        self.run_id = "a" * 32
+        self.run_dir = self.service.directory / "runs" / self.run_id
+        self.run_dir.mkdir(parents=True)
+
+    def test_checkpoint_recovers_from_a_transient_windows_file_lock(self):
+        job = {"id": self.run_id, "status": "running"}
+        self.service.checkpoint(job)
+        snapshot = self.run_dir / "run.json"
+        original_replace = Path.replace
+        transient_lock = PermissionError("Temporary Windows file lock")
+        transient_lock.winerror = 5
+
+        def replace_when_unlocked(source, target):
+            if replace.call_count == 1:
+                self.assertEqual(json.loads(snapshot.read_text(encoding="utf-8")), job)
+                raise transient_lock
+            return original_replace(source, target)
+
+        completed = {**job, "status": "complete"}
+        with patch.object(Path, "replace", autospec=True, side_effect=replace_when_unlocked) as replace:
+            self.service.checkpoint(completed)
+        self.assertEqual(replace.call_count, 2)
+        self.assertEqual(json.loads(snapshot.read_text(encoding="utf-8")), completed)
+
+    def test_moved_run_resolves_saved_waveform_and_checks(self):
+        previous = self.root / "previous" / "runs" / self.run_id / "full"
+        self.service.checkpoint({
+            "id": self.run_id,
+            "status": "complete",
+            "result": {
+                "wave_file": str(previous / "wave.vcd"),
+                "files": [{"path": str(previous / "checks.json")}],
+            },
+        })
+        result = self.service.get(self.run_id)["result"]
+        prefix = f"/api/runs/{self.run_id}/artifact/full"
+        self.assertEqual(result["wave_url"], f"{prefix}/wave.vcd")
+        self.assertEqual(result["files"][0]["url"], f"{prefix}/checks.json")
+
+
 @unittest.skipUnless(find_ghdl(), "GHDL required for candidate verification")
 class ModelServiceTests(unittest.TestCase):
     def setUp(self):
